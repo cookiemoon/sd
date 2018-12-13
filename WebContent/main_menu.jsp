@@ -12,18 +12,17 @@
 
 	<c:choose>
 		<c:when test="${session.loggedin == true}">
-			<p>Welcome, ${session.username}. Please choose an action.</p>
+			<s:form action="main_menu" method="post">
+				<s:submit name="multiplex" value="Post" />
+				<s:submit name="multiplex" value="Edit" />
+				<s:submit name="multiplex" value="Details" />
+				<s:submit name="multiplex" value="Search" />
+				<s:submit name="multiplex" value="Grant Editor Privilege" />
+				<s:submit name="multiplex" value="Dropbox" />
+				<s:submit name="multiplex" value="Logout" />
+			</s:form>
 		</c:when>
-		<c:otherwise>
-			<p>Welcome, you funky little secretive kid. Please choose an action.</p>
-		</c:otherwise>
 	</c:choose>
-
-	<c:forEach items="${userBean.allUsers}" var="value">
-		<c:out value="${value}" /><br>
-	</c:forEach>
-
-	<p><a href="<s:url action="index" />">Start</a></p>
 
 </body>
 </html>

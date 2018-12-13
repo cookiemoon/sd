@@ -1,4 +1,4 @@
-package Client;
+/*package Client;
 
 import Shared.*;
 
@@ -215,7 +215,7 @@ public class Client {
      */
 
 
-    private Album selectAlbum(List<Album> albums) {
+    /*private Album selectAlbum(List<Album> albums) {
         Album selected;
         while (true) {
             for(Album a : albums)
@@ -300,7 +300,7 @@ public class Client {
      * - Playlist
      */
 
-    private void edit() {
+    /*private void edit() {
         List<String> list = new ArrayList<>();
         list.add("Album, Artist, Group, Music, Playlist");
         String option;
@@ -533,7 +533,7 @@ public class Client {
      * - Playlist
      */
 
-    private void add() {
+    /*private void add() {
         List<String> list = new ArrayList<>();
         list.add("Artist, Album, Group, Music, Label, Genre, Concertos, Playlist, ");
         String option;
@@ -759,7 +759,7 @@ public class Client {
      * Group
      */
 
-    private void details() {
+    /*private void details() {
         List<String> list = new ArrayList<>();
         list.add("Artist, Album, Group, Music, Playlist)");
         String option;
@@ -926,4 +926,4 @@ public class Client {
         "2. Register\n"
         );
     }
-}
+}*/

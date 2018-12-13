@@ -117,46 +117,6 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public MessageIdentified<Group> postGroup(User editor, Group group) {
-        int messageID = msgID.getAndIncrement();
-        String json = JSON.messageIdRequest("post", "musical_group", editor, group, messageID);
-
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Group>>() {}.getType());
-    }
-
-    @Override
-    public MessageIdentified<Concert> postConcert(User editor, Concert concert) {
-        int messageID = msgID.getAndIncrement();
-        String json = JSON.messageIdRequest("post", "concert", editor, concert, messageID);
-
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Concert>>() {}.getType());
-    }
-
-    @Override
-    public MessageIdentified<Genre> postGenre(User editor, Genre genre) {
-        int messageID = msgID.getAndIncrement();
-        String json = JSON.messageIdRequest("post", "genres", editor, genre, messageID);
-
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Genre>>() {}.getType());
-    }
-
-    @Override
-    public MessageIdentified<Label> postLabel(User editor, Label label) {
-        int messageID = msgID.getAndIncrement();
-        String json = JSON.messageIdRequest("post", "label", editor, label, messageID);
-
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Label>>() {}.getType());
-    }
-
-    @Override
-    public MessageIdentified<Playlist> postPlaylist(Playlist playlist) {
-        int messageID = msgID.getAndIncrement();
-        String json = JSON.messageIdRequest("post", "playlist", playlist.getOwner(), playlist, messageID);
-
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Playlist>>() {}.getType());
-    }
-
-    @Override
     public MessageIdentified<MusicFile> postMusicFile(MusicFile mf) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("post", "files", mf.getOwner(), mf, messageID);
@@ -197,22 +157,6 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public Message<List<Playlist>> searchPlaylist(List<String> searchTerms) {
-        int messageID = msgID.getAndIncrement();
-        String json = JSON.messageRequest("search_playlist", searchTerms, messageID);
-
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<List<Playlist>>>() {}.getType());
-    }
-
-    @Override
-    public Message<List<Group>> searchGroup(List<String> searchTerms) {
-        int messageID = msgID.getAndIncrement();
-        String json = JSON.messageRequest("search_group", searchTerms, messageID);
-
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<List<Group>>>() {}.getType());
-    }
-
-    @Override
     public MessageIdentified<Album> editAlbum(User self, Album selected) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("edit_album", "album", self, selected, messageID);
@@ -229,27 +173,11 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public MessageIdentified<Playlist> editPlaylist(User self, Playlist selected) {
-        int messageID = msgID.getAndIncrement();
-        String json = JSON.messageIdRequest("edit_playlist", "playlist", self, selected, messageID);
-
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Playlist>>() {}.getType());
-    }
-
-    @Override
     public MessageIdentified<Music> editMusic(User self, Music selected) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("edit_music", "music", self, selected, messageID);
 
         return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Music>>() {}.getType());
-    }
-
-    @Override
-    public MessageIdentified<Group> editGroup(User self, Group selected) {
-        int messageID = msgID.getAndIncrement();
-        String json = JSON.messageIdRequest("edit_group", "group", self, selected, messageID);
-
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Group>>() {}.getType());
     }
 
     @Override
@@ -282,14 +210,6 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
         String json = JSON.messageRequest("details_music", selected, messageID);
 
         return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<Music>>() {}.getType());
-    }
-
-    @Override
-    public Message<Group> detailsGroup(Group selected) {
-        int messageID = msgID.getAndIncrement();
-        String json = JSON.messageRequest("details_group", selected, messageID);
-
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<Group>>() {}.getType());
     }
 
     @Override

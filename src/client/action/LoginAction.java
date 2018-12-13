@@ -17,7 +17,6 @@ public class LoginAction extends ActionSupport implements SessionAware {
 
 	@Override
 	public String execute() {
-		// any username is accepted without confirmation (should check using RMI)
 		if(this.username != null && !username.equals("")) {
 			this.getUserBean().setUsername(this.username);
 			this.getUserBean().setPassword(this.password);
@@ -47,7 +46,7 @@ public class LoginAction extends ActionSupport implements SessionAware {
 	public UserBean getUserBean() {
 		if(!session.containsKey("userBean"))
 			this.setUserBean(new UserBean());
-		return (UserBean) session.get("heyBean");
+		return (UserBean) session.get("userBean");
 	}
 
 	public void setUserBean(UserBean userBean) {

@@ -20,6 +20,8 @@ public class Album implements Serializable {
     String details;
     private List<Integer> artist_id;
     private Album old;
+    private List<Music> songs = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
 
     public Album(int id, String title) {
         this.id = id;
@@ -50,6 +52,14 @@ public class Album implements Serializable {
         String label = inputUtil.promptStr("Label: ");
         return new Album(-1, title, desc, groupName, release, label);
     }
+
+    public void addMusic(Music m) { this.songs.add(m); }
+
+    public List<Music> getMusic () { return this.songs; }
+
+    public void addReview(Review m) { this.reviews.add(m); }
+
+    public List<Review> getReview () { return this.reviews; }
 
     public int getID() {
         return id;

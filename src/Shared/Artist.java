@@ -13,6 +13,7 @@ public class Artist implements Serializable {
     List<Calendar> period;
     String details;
     private Artist old;
+    private List<Album> albums = new ArrayList<>();
 
     public Artist(int id, String name, String description, List<Calendar> period) {
         this.id = id;
@@ -74,6 +75,10 @@ public class Artist implements Serializable {
         setName(inputUtil.promptStr("Name: "));
         setDescription(inputUtil.promptStr("Description: "));
     }
+
+    public void addAlbum(Album m) { this.albums.add(m); }
+
+    public List<Album> getAlbum () { return this.albums; }
 
     public void setDetails(String details) {
         this.details = details;

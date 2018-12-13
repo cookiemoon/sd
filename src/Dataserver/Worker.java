@@ -122,20 +122,14 @@ public class Worker implements Runnable {
             case "search_music":
                 searchMusic(json);
                 break;
-            case "search_album":
-                searchAlbum(json);
-                break;
-            case "search_artist":
-                searchArtist(json);
-                break;
             case "details_music":
-                detailsMusic(json);
+                getMusic(json);
                 break;
             case "details_album":
-                detailsAlbum(json);
+                getAlbum(json);
                 break;
             case "details_artist":
-                detailsArtist(json);
+                getArtist(json);
                 break;
             case "make_editor":
                 makeEditor(json);
@@ -246,6 +240,23 @@ public class Worker implements Runnable {
 
             if(rs.isBeforeFirst()) {
                 Album album = new Album(rs.getInt("id"), rs.getString("title"), rs.getString("adesc"), inputUtil.toCalendar(rs.getDate("release_date")));
+
+                stmnt = setFields(con, "get-album-music", data.getID());
+                rs = stmnt.executeQuery();
+
+                while(rs.next()) {
+                    Music m = getMusic(new Music(rs.getInt("music_id"), ""), con);
+                    album.addMusic(m);
+                }
+
+                stmnt = setFields(con, "get-album-reviews", data.getID());
+                rs = stmnt.executeQuery();
+
+                while(rs.next()) {
+                    Review r = getReview(new Review(0, "", new User(rs.getString("users_email"), ""), new Album(rs.getInt("album_id"), "")), con);
+                    album.addReview(r);
+                }
+
                 return album;
             }
 
@@ -266,6 +277,15 @@ public class Worker implements Runnable {
 
             if(rs.isBeforeFirst()) {
                 Artist artist = new Artist(rs.getInt("id"), rs.getString("name"), rs.getString("adesc"));
+
+                stmnt = setFields(con, "get-artist-album", data.getID());
+                rs = stmnt.executeQuery();
+
+                while(rs.next()) {
+                    Album a = getAlbum(new Album(rs.getInt("album_id"), ""), con);
+                    artist.addAlbum(a);
+                }
+
                 return artist;
             }
 
@@ -593,6 +613,26 @@ public class Worker implements Runnable {
         }
     }
 
+    //Search functions
+
+    //Misc
+
+    private ResultSet makeEditor(User grantee, Connection con) {
+        try {
+            PreparedStatement stmnt = setFields(con, "post-editor", true, grantee.getEmail());
+            stmnt.executeUpdate();
+            ResultSet rs = stmnt.getGeneratedKeys();
+
+            return rs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } catch (MalformedQuery e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     //Login specific functions: these serve to manage the user's session
     //Login, register, and logout
 
@@ -643,19 +683,13 @@ public class Worker implements Runnable {
                 user.setSesh_hash(UUID.randomUUID().toString());
 
                 if (checkAnyUser(con)) {
-                    stmnt = setFields(con, sqlCommands.get("user-register"),
-                            user.getEmail(), inputUtil.hashedPass(user.getPwd()),
-                            user.getSesh_hash(), false, false
-                    );
+                    user.setAdmin_f(false);
+                    user.setEditor_f(false);
                 } else {
                     user.setAdmin_f(true);
                     user.setEditor_f(true);
-                    stmnt = setFields(con, sqlCommands.get("user-register"),
-                            user.getEmail(), inputUtil.hashedPass(user.getPwd()),
-                            user.getSesh_hash(), true, true
-                    );
                 }
-                stmnt.executeUpdate();
+                postUser(user, con);
                 con.commit();
 
                 messageClientSuccess(req, user);
@@ -665,9 +699,6 @@ public class Worker implements Runnable {
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            internalServerError(con, req);
-        } catch (MalformedQuery e) {
-            System.out.println("Malformed Query in worker.register");
             internalServerError(con, req);
         }
     }
@@ -985,269 +1016,75 @@ public class Worker implements Runnable {
 
     //Details functions
 
-    private void detailsAlbum(String json) {
+    private void getAlbum(String json) {
         Message<Album> req = gson.fromJson(json, new TypeToken<Message<Album>>() {}.getType());
 
-        final String GETALBUMID_SQL = sqlCommands.get("get-album-id");
-        final String GETALBUMLABEL_SQL = sqlCommands.get("get-album-label");
-        final String GETALBUMGENRES_SQL = sqlCommands.get("get-album-genres");
-        final String GETALBUMMUSIC_SQL = sqlCommands.get("get-album-musics");
-        final String GETALBUMREVIEW_SQL = sqlCommands.get("get-album-review");
-        final String GETMUSICID_SQL = sqlCommands.get("get-music-id");
         Connection con = db.getConn();
         Album album = req.getObj();
-        String result = "";
-        int count = 1;
-
-        String[] errors = new String[1];
 
         try {
 
             con.setAutoCommit(false);
 
-            PreparedStatement stmnt = con.prepareStatement(GETALBUMID_SQL);
-            stmnt.setInt(1, album.getID());
-            ResultSet rs = stmnt.executeQuery();
-            ResultSet rs_2, rs_3;
+            Album real = getAlbum(album, con);
 
-            if(!rs.isBeforeFirst()) {
-                messageClientError(req, "Album does not exist");
-                con.close();
-                return;
+            if(real!=null) {
+                messageClientSuccess(req, real);
             } else {
-                while (rs.next()) {
-                    stmnt = con.prepareStatement(GETALBUMMUSIC_SQL);
-                    stmnt.setInt(1, rs.getInt("id"));
-                    rs_2 = stmnt.executeQuery();
-                    result = "Title: " + album.getTitle()
-                    + "\nArtist: " + album.getGroupName()
-                    + "\nDescription: " + rs.getString("adescription")
-                    + "\nRelease Date: " + inputUtil.formatDate(rs.getDate("release_date"))
-                    + "\nSong list:\n";
-                    stmnt = con.prepareStatement(GETMUSICID_SQL);
-                    while (rs_2.next()) {
-                        stmnt.setInt(1, rs_2.getInt("music_id"));
-                        rs_3 = stmnt.executeQuery();
-                        result = result + String.valueOf(count) 
-                        + ". " 
-                        + rs_3.getString("music_title")
-                        + "\n";
-                    }
-                    stmnt = con.prepareStatement(GETALBUMGENRES_SQL);
-                    stmnt.setInt(1, rs.getInt("id"));
-                    rs_2 = stmnt.executeQuery();
-                    result = result + "Genres:\n";
-                    while (rs_2.next()) {
-                        result = result + "- " 
-                        + rs_2.getString("genres_gname")
-                        + "\n";
-                    }
-                    stmnt = con.prepareStatement(GETALBUMLABEL_SQL);
-                    stmnt.setInt(1, rs.getInt("id"));
-                    rs_2 = stmnt.executeQuery();
-                    result = result + "Sponsored by:\n";
-                    while (rs_2.next()) {
-                        result = result + "- " 
-                        + rs_2.getString("label_lname")
-                        + "\n";
-                    }
-                    stmnt = con.prepareStatement(GETALBUMREVIEW_SQL);
-                    stmnt.setInt(1, rs.getInt("id"));
-                    rs_2 = stmnt.executeQuery();
-                    result = result + "Reviews:\n";
-                    while (rs_2.next()) {
-                        result = result + "User: "
-                        + rs_2.getString("users_email")
-                        + "\nScore: "
-                        + String.valueOf(rs_2.getInt("score"))
-                        + "\nReview: "
-                        + rs_2.getString("review")
-                        + "\n";
-                    }
-                } 
+                messageClientError(req, "Album not found");
             }
 
             con.close();
-
-            album.setDetails(result);
-
-            messageClientSuccess(req, album);
 
         } catch (SQLException e) {
             internalServerError(con, req);
         }
     }
 
-    private void detailsMusic(String json) {
+    private void getMusic(String json) {
         Message<Music> req = gson.fromJson(json, new TypeToken<Message<Music>>() {}.getType());
-
-        final String GETMUSICID_SQL = sqlCommands.get("get-music-id");
-        final String GETMUSICCONCERT_SQL = sqlCommands.get("get-music-concert");
-        final String GETMUSICGENRES_SQL = sqlCommands.get("get-music-genres");
         Connection con = db.getConn();
-        Music music = req.getObj();
-        String result = "";
-        int count = 1;
 
-        String[] errors = new String[1];
+        Music music = req.getObj();
 
         try {
 
             con.setAutoCommit(false);
 
-            PreparedStatement stmnt = con.prepareStatement(GETMUSICID_SQL);
-            stmnt.setInt(1, music.getID());
-            ResultSet rs = stmnt.executeQuery();
-            ResultSet rs_2;
+            Music real = getMusic(music, con);
 
-            if(!rs.isBeforeFirst()) {
-                messageClientError(req, "Music does not exist");
-                con.close();
-                return;
+            if(real!=null) {
+                messageClientSuccess(req, real);
             } else {
-                while (rs.next()) {
-                    stmnt = con.prepareStatement(GETMUSICCONCERT_SQL);
-                    stmnt.setInt(1, rs.getInt("id"));
-                    rs_2 = stmnt.executeQuery();
-                    result = "Song: " + music.getTitle() 
-                    + "\nAlbum: " + music.getAlbumName() 
-                    + "\nArtist: " + music.getGroupName()
-                    + "\nDuration: " + String.valueOf(rs.getInt("duration"))
-                    + "\nLyrics: " + rs.getString("lyrics")
-                    + "\nPlayed at:\n";
-                    if(rs_2.isBeforeFirst()) {
-                        while (rs_2.next()) {
-                            result = result + String.valueOf(count) 
-                            + ". " 
-                            + rs_2.getString("concert_venue")
-                            + " on "
-                            + inputUtil.formatDate(rs_2.getDate("concert_scheduled_day"))
-                            + "\n";
-                        }
-                    }
-                    result = result + "Genres:\n";
-                    stmnt = con.prepareStatement(GETMUSICGENRES_SQL);
-                    stmnt.setInt(1, rs.getInt("id"));
-                    if(rs_2.isBeforeFirst()) {
-                        while (rs_2.next()) {
-                            result = result + "- " 
-                            + rs_2.getString("genres_gname")
-                            + "\n";
-                        }
-                    }
-                }  
+                messageClientError(req, "Music not found");
             }
 
             con.close();
-
-            music.setDetails(result);
-
-            messageClientSuccess(req, music);
 
         } catch (SQLException e) {
             internalServerError(con, req);
         }
     }
 
-    private void detailsArtist(String json) {
-        Message<Group> req = gson.fromJson(json, new TypeToken<Message<Group>>() {}.getType());
+    private void getArtist(String json) {
+        Message<Artist> req = gson.fromJson(json, new TypeToken<Message<Artist>>() {}.getType());
 
-        final String GETMUSICALGROUPID_SQL = sqlCommands.get("get-musical-group-id");
-        final String GETMUSICALGROUPCONCERT_SQL = sqlCommands.get("get-musical-group-concert");
-        final String GETMUSICALGROUPLABEL_SQL = sqlCommands.get("get-musical-group-label");
-        final String GETMUSICALGROUPALBUM_SQL = sqlCommands.get("get-musical-group-album");
-        final String GETMUSICALGROUPARTIST_SQL = sqlCommands.get("get-musical-group-artist");
-        final String GETMUSICALGROUPPERIOD_SQL = sqlCommands.get("get-musical-group-period");
-        final String GETALBUMID_SQL = sqlCommands.get("get-album-id");
         Connection con = db.getConn();
-        Group group = req.getObj();
-        String result = "";
-        int count = 1;
-
-        String[] errors = new String[1];
+        Artist artist = req.getObj();
 
         try {
 
             con.setAutoCommit(false);
 
-            PreparedStatement stmnt = con.prepareStatement(GETMUSICALGROUPID_SQL);
-            stmnt.setString(1, group.getName());
-            ResultSet rs = stmnt.executeQuery();
-            ResultSet rs_2, rs_3;
+            Artist real = getArtist(artist, con);
 
-            if(!rs.isBeforeFirst()) {
-                messageClientError(req, "Group does not exist");
-                con.close();
-                return;
+            if(real!=null) {
+                messageClientSuccess(req, real);
             } else {
-                while (rs.next()) {
-                    stmnt = con.prepareStatement(GETMUSICALGROUPALBUM_SQL);
-                    stmnt.setInt(1, rs.getInt("id"));
-                    rs_2 = stmnt.executeQuery();
-                    result = "Group: " + group.getName()
-                    + "\nAlbums:\n";
-                    stmnt = con.prepareStatement(GETALBUMID_SQL);
-                    while (rs_2.next()) {
-                        stmnt.setInt(1,rs_2.getInt("album_id"));
-                        rs_3 = stmnt.executeQuery();
-                        result = result + String.valueOf(count) 
-                        + ". " 
-                        + rs_3.getString("title")
-                        + "\n";
-                    }
-                    stmnt = con.prepareStatement(GETMUSICALGROUPPERIOD_SQL);
-                    stmnt.setInt(1, rs.getInt("id"));
-                    rs_2 = stmnt.executeQuery();
-                    result = result + "Active periods:\n";
-                    while (rs_2.next()) {
-                        result = result + "From " 
-                        + inputUtil.formatDate(rs_2.getDate("beg_date")) 
-                        + " to ";
-                        if (rs_2.getDate("end_date") != null)
-                            result = result + inputUtil.formatDate(rs_2.getDate("end_date"))
-                                    + "\n";
-                        else
-                            result = result + "present\n";
-                    }
-                    stmnt = con.prepareStatement(GETMUSICALGROUPCONCERT_SQL);
-                    stmnt.setInt(1, rs.getInt("id"));
-                    rs_2 = stmnt.executeQuery();
-                    result = result + "Played at:\n";
-                    count = 1;
-                    while (rs_2.next()) {
-                        result = result + String.valueOf(count) 
-                        + ". " 
-                        + rs_2.getString("concert_venue")
-                        + inputUtil.formatDate(rs_2.getDate("concert_scheduled_day"))
-                        + "\n";
-                    }
-                    stmnt = con.prepareStatement(GETMUSICALGROUPLABEL_SQL);
-                    stmnt.setInt(1, rs.getInt("id"));
-                    rs_2 = stmnt.executeQuery();
-                    result = result + "Sponsored by:\n";
-                    while (rs_2.next()) {
-                        result = result + "- " 
-                        + rs_2.getString("label_lname")
-                        + "\n";
-                    }
-                    stmnt = con.prepareStatement(GETMUSICALGROUPARTIST_SQL);
-                    stmnt.setInt(1, rs.getInt("id"));
-                    rs_2 = stmnt.executeQuery();
-                    result = result + "Members:\n";
-                    while (rs_2.next()) {
-                        result = result + "- " 
-                        + rs_2.getString("artist_aname")
-                        + "\n";
-                    }
-                    result = result + "Description: " + rs.getString("gdescription") + "\n";
-                } 
+                messageClientError(req, "Music not found");
             }
 
             con.close();
-
-            group.setDetails(result);
-
-            messageClientSuccess(req, group);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -1333,7 +1170,7 @@ public class Worker implements Runnable {
                 con.close();
             } else {
                 
-                //postEditor(g, con);
+                makeEditor(g, con);
 
                 con.commit();
                 con.close();
@@ -1348,45 +1185,6 @@ public class Worker implements Runnable {
     }
 
     //Search
-
-    private void searchAlbum(String json) {
-        Message<List<String>> req = gson.fromJson(json, new TypeToken<Message<List<String>>>() {}.getType());
-        List<String> terms = req.getObj();
-        Message<List<Album>> resp = new Message<>(req.getType(), "response", null);
-        resp.embedMsgid(req.getMsgid());
-        List<Album> obj = new ArrayList<>();
-        Album album = new Album(0, null);
-
-        final String SEARCHALBUM_SQL = sqlCommands.get("get-album");
-        Connection con = db.getConn();
-        
-        try {
-
-            con.setAutoCommit(false);
-
-            PreparedStatement stmnt = con.prepareStatement(SEARCHALBUM_SQL);
-            stmnt.setString(1, terms.get(0));
-            stmnt.setString(2, terms.get(1));
-            ResultSet rs = stmnt.executeQuery();
-
-            if(rs.isBeforeFirst()) {
-                terms.set(0, "No matching results were found");
-            } else {
-                while(rs.next()) {
-                    album = new Album(rs.getInt("id"), rs.getString("title"), rs.getString("adescription"), null, inputUtil.toCalendar(rs.getDate("release_date")), null);
-                }
-
-                obj.add(album);
-            }
-
-            con.close();
-
-            messageClientSuccess(resp, obj);
-
-        } catch (SQLException e) {
-                internalServerError(con, req);
-        }
-    }
 
     private void searchMusic(String json) {
         Message<List<String>> req = gson.fromJson(json, new TypeToken<Message<List<String>>>() {}.getType());
@@ -1417,44 +1215,6 @@ public class Worker implements Runnable {
                 }
 
                 obj.add(music);
-            }
-
-            con.close();
-
-            messageClientSuccess(resp, obj);
-
-        } catch (SQLException e) {
-            internalServerError(con, req);
-        }
-    }
-
-    private void searchArtist(String json) {
-        Message<List<String>> req = gson.fromJson(json, new TypeToken<Message<List<String>>>() {}.getType());
-        List<String> terms = req.getObj();
-        Message<List<Group>> resp = new Message<>(req.getType(), "response", null);
-        resp.embedMsgid(req.getMsgid());
-        List<Group> obj = new ArrayList<>();
-        Group group = new Group(0, null, null, null);
-
-        final String SEARCHMUSICALGROUP_SQL = sqlCommands.get("get-musical-group");
-        Connection con = db.getConn();
-        
-        try {
-
-            con.setAutoCommit(false);
-
-            PreparedStatement stmnt = con.prepareStatement(SEARCHMUSICALGROUP_SQL);
-            stmnt.setString(1, terms.get(0));
-            ResultSet rs = stmnt.executeQuery();
-
-            if(!rs.isBeforeFirst()) {
-                terms.set(0, "No matching results were found");
-            } else {
-                while(rs.next()) {
-                    group = new Group(rs.getInt("id"), rs.getString("gname"), rs.getString("gdescription"), null);
-                }
-
-                obj.add(group);
             }
 
             con.close();
@@ -1556,6 +1316,8 @@ public class Worker implements Runnable {
             internalServerError(con, req);
         }
     }
+
+    //Add-ons
 
     private boolean isSequential(List<Integer> numbers) {
         Collections.sort(numbers);

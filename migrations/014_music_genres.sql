@@ -1,5 +1,5 @@
 CREATE TABLE music_genres (
-    music_id    VARCHAR(128),
+    music_id    SERIAL,
     album_id    SERIAL,
     PRIMARY KEY(album_id, music_id)
 );

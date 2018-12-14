@@ -18,7 +18,7 @@ public class Message<T> implements Serializable {
     @Expose
     private boolean accepted;
     @Expose
-    private String [] errors;
+    private String errors;
     @Expose
     private T obj;
 
@@ -48,7 +48,7 @@ public class Message<T> implements Serializable {
     }
 
     public String getErrors() {
-        return errors[0];
+        return errors;
     }
 
     // Used to construct a request
@@ -69,7 +69,7 @@ public class Message<T> implements Serializable {
      * @param accepted If the message got accepted or not
      * @param errors If it didn't got accepted, the errors make the problems explicit
      */
-    public Message(Message<T> req, String uuid, boolean accepted, String[] errors) {
+    public Message(Message<T> req, String uuid, boolean accepted, String errors) {
         this.type = req.getType();
         this.state = "response";
         this.uuid = uuid;
@@ -79,7 +79,7 @@ public class Message<T> implements Serializable {
         this.obj = req.getObj();
     }
 
-    public Message(Message<T> req, String uuid, boolean accepted, String[] errors, T u) {
+    public Message(Message<T> req, String uuid, boolean accepted, String errors, T u) {
         this.type = req.getType();
         this.state = "response";
         this.uuid = uuid;
@@ -106,7 +106,7 @@ public class Message<T> implements Serializable {
                 ", uuid='" + uuid + '\'' +
                 ", msgid=" + msgid +
                 ", accepted=" + accepted +
-                ", errors=" + Arrays.toString(errors) +
+                ", errors=" + errors +
                 ", obj=" + obj +
                 '}';
     }

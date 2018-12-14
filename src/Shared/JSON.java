@@ -15,7 +15,7 @@ public class JSON {
         return gson.toJson(msg);
     }
 
-    public static <T> String messageResponse(Message<T> req, String uuid, boolean accepted, String[] errors, T obj) {
+    public static <T> String messageResponse(Message<T> req, String uuid, boolean accepted, String errors, T obj) {
         req.setObj(null);
         req.setState("response");
         return gson.toJson(new Message<>(req, uuid, accepted, errors, obj));
@@ -27,13 +27,13 @@ public class JSON {
         return gson.toJson(msg);
     }
 
-    public static <T> String messageIdResponse(MessageIdentified<T> req, String uuid,  boolean accepted, String[] errors) {
+    public static <T> String messageIdResponse(MessageIdentified<T> req, String uuid,  boolean accepted, String errors) {
         req.setObj(null);
         req.setState("response");
         return gson.toJson(new MessageIdentified<>(req, uuid, accepted, errors));
     }
 
-    public static String response(String uuid, boolean accepted, String[] errors) {
+    public static String response(String uuid, boolean accepted, String errors) {
         Gson gson;
         gson = new GsonBuilder().setPrettyPrinting().create();
         Message<String> resp = new Message<String>(null, uuid, accepted, errors);
@@ -44,7 +44,7 @@ public class JSON {
         return json;
     }
 
-    public static String response(String content, String uuid, boolean accepted, String[] errors) {
+    public static String response(String content, String uuid, boolean accepted, String errors) {
         Gson gson;
         gson = new GsonBuilder().setPrettyPrinting().create();
         Message<String> resp = new Message<String>(null, uuid, accepted, errors, content);
@@ -55,7 +55,7 @@ public class JSON {
         return json;
     }
 
-    public static String searchResponse(String content, String uuid, boolean accepted, String[] errors) {
+    public static String searchResponse(String content, String uuid, boolean accepted, String errors) {
         Gson gson;
         gson = new GsonBuilder().setPrettyPrinting().create();
         Message<String> resp = new Message<String>(null, uuid, accepted, errors, content);

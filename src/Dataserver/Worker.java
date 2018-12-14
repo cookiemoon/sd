@@ -170,10 +170,10 @@ public class Worker implements Runnable {
         }
     }
 
-    private <T> void messageClientError(Message<T> req, String... errors) {
+    private <T> void messageClientError(Message<T> req, String errors) {
         NetworkUtil.multicastSend(
                 RESPONSE_PORT,
-                JSON.messageResponse(req, uuid, false, errors.clone(), null)
+                JSON.messageResponse(req, uuid, false, errors, null)
         );
     }
 
@@ -184,10 +184,10 @@ public class Worker implements Runnable {
         );
     }
 
-    private <T> void messageClientError(MessageIdentified<T> req, String... errors) {
+    private <T> void messageClientError(MessageIdentified<T> req, String errors) {
         NetworkUtil.multicastSend(
                 RESPONSE_PORT,
-                JSON.messageIdResponse(req, uuid, false, errors.clone())
+                JSON.messageIdResponse(req, uuid, false, errors)
         );
     }
 

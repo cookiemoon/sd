@@ -5,12 +5,12 @@ package client.action;
 
 import Shared.Message;
 import Shared.User;
+import client.model.Bean;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
 
 import java.rmi.RemoteException;
 import java.util.Map;
-import client.model.UserBean;
 
 public class LoginAction extends ActionSupport implements SessionAware {
 	private static final long serialVersionUID = 4L;
@@ -22,10 +22,10 @@ public class LoginAction extends ActionSupport implements SessionAware {
 	public String execute() {
 		System.out.println(this.username);
 		if(this.username != null && !username.equals("")) {
-			this.getUserBean().setUsername(this.username);
-			this.getUserBean().setPassword(this.password);
+			this.getBean().setUsername(this.username);
+			this.getBean().setPassword(this.password);
 			try {
-				Message<User> rsp = this.getUserBean().login();
+				Message<User> rsp = this.getBean().login();
 				if (rsp.isAccepted()) {
 					session.put("username", username);
 					session.put("loggedin", true); // this marks the user as logged in
@@ -38,7 +38,7 @@ public class LoginAction extends ActionSupport implements SessionAware {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			return LOGIN;
+			return INPUT;
 		}
 		else {
 			return SUCCESS;
@@ -53,14 +53,14 @@ public class LoginAction extends ActionSupport implements SessionAware {
 		this.password = password;
 	}
 
-	public UserBean getUserBean() {
-		if(!session.containsKey("userBean"))
-			this.setUserBean(new UserBean());
-		return (UserBean) session.get("userBean");
+	public Bean getBean() {
+		if(!session.containsKey("bean"))
+			this.setBean(new Bean());
+		return (Bean) session.get("bean");
 	}
 
-	public void setUserBean(UserBean userBean) {
-		this.session.put("userBean", userBean);
+	public void setBean(Bean bean) {
+		this.session.put("bean", bean);
 	}
 
 	@Override

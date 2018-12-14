@@ -9,7 +9,7 @@ public class MessageIdentified<T> implements Serializable {
     private String uuid;
     private int msgid;
     private boolean accepted;
-    private String [] errors;
+    private String errors;
     private User user;
     private T obj;
 
@@ -18,7 +18,7 @@ public class MessageIdentified<T> implements Serializable {
     }
 
     public String errors() {
-        return this.errors[0];
+        return this.errors;
     }
 
     // Used to construct a request
@@ -37,7 +37,7 @@ public class MessageIdentified<T> implements Serializable {
         this.obj = obj;
     }
 
-    public MessageIdentified(MessageIdentified<T> req, String uuid, boolean accepted, String[] errors) {
+    public MessageIdentified(MessageIdentified<T> req, String uuid, boolean accepted, String errors) {
         this.type = req.getType();
         this.state = "response";
         this.uuid = uuid;
@@ -101,10 +101,10 @@ public class MessageIdentified<T> implements Serializable {
     }
 
     public String getErrors() {
-        return errors[0];
+        return errors;
     }
 
-    public void setErrors(String[] errors) {
+    public void setErrors(String errors) {
         this.errors = errors;
     }
 

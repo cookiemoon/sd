@@ -6,10 +6,10 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Welcome to DROPMUSIC</title>
+    <title>DROPMUSIC : post</title>
 </head>
 <body>
-
+<p><b>Posting Menu</b></p>
 <c:choose>
     <s:textfield value="What do you want to post?" />
     <c:when test="${session.loggedin == true}">

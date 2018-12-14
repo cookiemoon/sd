@@ -17,5 +17,6 @@
 		<s:submit value="Login"/>
 	</s:form>
 	<a href="register.jsp" >Don't have an account? Click here to register.</a>
+
 </body>
 </html>

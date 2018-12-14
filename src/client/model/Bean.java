@@ -11,16 +11,18 @@ import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 
 import RMI.ServerInterface;
-import Shared.Message;
-import Shared.MessageIdentified;
-import Shared.User;
+import Shared.*;
 import rmiserver.RMIServerInterface;
 
-public class UserBean {
+public class Bean {
 	private ServerInterface server;
 	private User user = new User(null, null);
+	private Music music = new Music(-1, null);
+	private Album album = new Album(-1, null);
+	private Artist artist = new Artist(-1, null, null);
+	private Review review = new Review(-1, null, null, null);
 
-	public UserBean() {
+	public Bean() {
 		try {
 			server = (ServerInterface) Naming.lookup("rmi://localhost:1100/RMIServer");
 		}

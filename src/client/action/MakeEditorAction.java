@@ -1,6 +1,6 @@
 package client.action;
 
-import client.model.UserBean;
+import client.model.Bean;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
 
@@ -14,7 +14,7 @@ public class MakeEditorAction extends ActionSupport implements SessionAware {
 
     @Override
     public String execute() throws RemoteException {
-        if(this.getUserBean().grantPrivilege(this.grantee).isAccepted())
+        if(this.getBean().grantPrivilege(this.grantee).isAccepted())
             return SUCCESS;
         else
             return ERROR;
@@ -24,14 +24,14 @@ public class MakeEditorAction extends ActionSupport implements SessionAware {
         this.grantee = grantee;
     }
 
-    public UserBean getUserBean() {
-        if(!session.containsKey("userBean"))
-            this.setUserBean(new UserBean());
-        return (UserBean) session.get("userBean");
+    public Bean getBean() {
+        if(!session.containsKey("bean"))
+            this.setBean(new Bean());
+        return (Bean) session.get("bean");
     }
 
-    public void setUserBean(UserBean userBean) {
-        this.session.put("userBean", userBean);
+    public void setBean(Bean bean) {
+        this.session.put("bean", bean);
     }
 
     @Override

@@ -9,7 +9,7 @@
 <title>DROPMUSIC : main menu</title>
 </head>
 <body>
-
+<p><b>Main Menu</b></p>
 	<c:choose>
 		<c:when test="${session.loggedin == true}">
 			<p>Welcome to dropmusic, ${session.username}. Please choose an action.</p>

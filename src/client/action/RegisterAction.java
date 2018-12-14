@@ -2,7 +2,7 @@ package client.action;
 
 import Shared.Message;
 import Shared.User;
-import client.model.UserBean;
+import client.model.Bean;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
 
@@ -18,10 +18,10 @@ public class RegisterAction extends ActionSupport implements SessionAware {
     @Override
     public String execute() {
         if(this.username != null && !username.equals("") && this.password != null && !password.equals("")) {
-            this.getUserBean().setUsername(this.username);
-            this.getUserBean().setPassword(this.password);
+            this.getBean().setUsername(this.username);
+            this.getBean().setPassword(this.password);
             try {
-                Message<User> rsp = this.getUserBean().register();
+                Message<User> rsp = this.getBean().register();
                 if (rsp.isAccepted()) {
                     session.put("username", username);
                     session.put("loggedin", true);
@@ -49,14 +49,14 @@ public class RegisterAction extends ActionSupport implements SessionAware {
         this.password = password;
     }
 
-    public UserBean getUserBean() {
-        if(!session.containsKey("userBean"))
-            this.setUserBean(new UserBean());
-        return (UserBean) session.get("userBean");
+    public Bean getBean() {
+        if(!session.containsKey("bean"))
+            this.setBean(new Bean());
+        return (Bean) session.get("bean");
     }
 
-    public void setUserBean(UserBean userBean) {
-        this.session.put("userBean", userBean);
+    public void setBean(Bean bean) {
+        this.session.put("bean", bean);
     }
 
     @Override

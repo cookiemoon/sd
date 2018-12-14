@@ -200,7 +200,7 @@ public class Worker implements Runnable {
 
     private PreparedStatement setFields (Connection con, String sql, Object... fields) throws MalformedQuery {
         try {
-            PreparedStatement s = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement s = con.prepareStatement(sqlCommands.get(sql), Statement.RETURN_GENERATED_KEYS);
             int i = 1;
             for (Object o : fields) {
                 if  (o == null)
@@ -239,7 +239,7 @@ public class Worker implements Runnable {
             PreparedStatement stmnt = setFields(con, "get-album-id", data.getID());
             ResultSet rs = stmnt.executeQuery();
 
-            if(rs.isBeforeFirst()) {
+            if(rs.next()) {
                 Album album = new Album(rs.getInt("id"), rs.getString("title"), rs.getString("adesc"), inputUtil.toCalendar(rs.getDate("release_date")));
 
                 stmnt = setFields(con, "get-album-music", data.getID());
@@ -276,7 +276,7 @@ public class Worker implements Runnable {
             PreparedStatement stmnt = setFields(con, "get-artist-id", data.getID());
             ResultSet rs = stmnt.executeQuery();
 
-            if(rs.isBeforeFirst()) {
+            if(rs.next()) {
                 Artist artist = new Artist(rs.getInt("id"), rs.getString("name"), rs.getString("adesc"));
 
                 stmnt = setFields(con, "get-artist-album", data.getID());
@@ -305,7 +305,7 @@ public class Worker implements Runnable {
             PreparedStatement stmnt = setFields(con, "get-file", data.getMusicID(), data.getOwner().getEmail());
             ResultSet rs = stmnt.executeQuery();
 
-            if(rs.isBeforeFirst()) {
+            if(rs.next()) {
                 MusicFile file = new MusicFile(getUser(new User(rs.getString("users_email"), ""), con), getMusic(new Music(rs.getInt("music_id"), ""), con));
                 return file;
             }
@@ -325,7 +325,7 @@ public class Worker implements Runnable {
             PreparedStatement stmnt = setFields(con, "get-music-id", data.getID());
             ResultSet rs = stmnt.executeQuery();
 
-            if(rs.isBeforeFirst()) {
+            if(rs.next()) {
                 Music music = new Music(rs.getInt("id"), rs.getString("title"), rs.getInt("duration"), rs.getString("lyrics"));
                 return music;
             }
@@ -345,7 +345,7 @@ public class Worker implements Runnable {
             PreparedStatement stmnt = setFields(con, "get-review", data.getReviewed().getID(), data.getReviewer().getEmail());
             ResultSet rs = stmnt.executeQuery();
 
-            if(rs.isBeforeFirst()) {
+            if(rs.next()) {
                 Review review = new Review(rs.getInt("score"), rs.getString("review"), getUser(new User(rs.getString("users_email"), ""), con), getAlbum(new Album(rs.getInt("id"), ""), con));
                 return review;
             }
@@ -365,8 +365,8 @@ public class Worker implements Runnable {
             PreparedStatement stmnt = setFields(con, "get-user", data.getEmail());
             ResultSet rs = stmnt.executeQuery();
 
-            if(rs.isBeforeFirst()) {
-                User user = new User(rs.getString("email"), rs.getString("password"));
+            if(rs.next()) {
+                User user = new User(rs.getString("email"), rs.getString("pwd"), rs.getBoolean("editor"));
                 return user;
             }
 
@@ -648,11 +648,12 @@ public class Worker implements Runnable {
             con.setAutoCommit(false);
 
             User real = getUser(user, con);
+            System.out.println(real.isEditor_f());
 
             if (real==null) {
                 messageClientError(req, "User does not exist");
             } else {
-                if (inputUtil.hashedPass(user.getPwd()).equals(real.getHashedPwd()))
+                if (inputUtil.hashedPass(user.getPwd()).equals(real.getPwd()))
                     messageClientSuccess(req, real);
                 else {
                     messageClientError(req, "The email or password is incorrect");
@@ -691,7 +692,7 @@ public class Worker implements Runnable {
                 postUser(user, con);
                 con.commit();
 
-                messageClientSuccess(req, real);
+                messageClientSuccess(req, user);
             } else {
                 messageClientError(req, "Email is already in use");
             }

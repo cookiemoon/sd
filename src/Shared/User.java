@@ -13,8 +13,6 @@ public class User implements Serializable {
     private String pwd;
     private String sesh_hash;
     private boolean editor_f;
-    private boolean admin_f;
-    private boolean isHashed;
 
     public static User newUser() {
         String username = inputUtil.promptStr("Enter your username: ");
@@ -23,13 +21,11 @@ public class User implements Serializable {
     }
 
 
-    public User(String email, String pwd, String sesh_hash, boolean editor_f, boolean admin_f) {
+    public User(String email, String pwd, String sesh_hash, boolean editor_f) {
         this.email = email;
         this.pwd = pwd;
         this.sesh_hash = sesh_hash;
         this.editor_f = editor_f;
-        this.admin_f = admin_f;
-        this.isHashed = false;
     }
 
     public User(String email, String pwd) {
@@ -37,15 +33,12 @@ public class User implements Serializable {
         this.pwd = pwd;
         this.sesh_hash = null;
         this.editor_f = false;
-        this.admin_f = false;
-        this.isHashed = false;
     }
 
     public User(String email, String pwd, boolean editor_f ) {
         this.email = email;
         this.pwd = pwd;
         this.editor_f = editor_f;
-        this.isHashed = true;
     }
 
     public static long getSerialVersionUID() {
@@ -62,13 +55,6 @@ public class User implements Serializable {
 
     public String getPwd() {
         return pwd;
-    }
-
-    public String getHashedPwd() {
-        if (this.isHashed)
-            return this.pwd;
-        else
-            return inputUtil.hashedPass(pwd);
     }
 
     public void setPwd(String pwd) {
@@ -91,14 +77,6 @@ public class User implements Serializable {
         this.editor_f = editor_f;
     }
 
-    public boolean isAdmin_f() {
-        return admin_f;
-    }
-
-    public void setAdmin_f(boolean admin_f) {
-        this.admin_f = admin_f;
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -106,7 +84,6 @@ public class User implements Serializable {
                 ", pwd='" + pwd + '\'' +
                 ", sesh_hash='" + sesh_hash + '\'' +
                 ", editor_f=" + editor_f +
-                ", admin_f=" + admin_f +
                 '}';
     }
 }

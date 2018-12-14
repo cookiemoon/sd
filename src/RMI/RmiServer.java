@@ -14,13 +14,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.thavam.util.concurrent.BlockingHashMap;
-import sun.nio.ch.Net;
 
 // Uses AtomicInteger for the msgid
 public class RmiServer extends UnicastRemoteObject implements ServerInterface {
     static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     static final long serialVersionUID = 1L;
-    static int SERVER_PORT = 1099;
+    static int SERVER_PORT = 1100;
     static int SENDING_PORT = 4321;
     static MulticastListener multListener = null;
     static Registry r;
@@ -59,14 +58,12 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
             server = new RmiServer(broker, msgID);
 
             r = LocateRegistry.createRegistry(SERVER_PORT);
-            Naming.rebind("RMIServer", server);
+            r.rebind("RMIServer", server);
 
             System.out.println("RMIServer " + server.getID() + " ready");
         } catch (RemoteException e) {
             System.out.println("CRASHED " + e.getMessage());
             e.getStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         }
     }
 

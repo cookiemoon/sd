@@ -2,5 +2,4 @@
 -- Position 1 -> Email of the user
 SELECT *
 FROM users
-WHERE email = ?
-LIMIT 1;
+WHERE email = ?;

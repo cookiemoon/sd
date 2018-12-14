@@ -6,18 +6,23 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Hey!</title>
+<title>DROPMUSIC : main menu</title>
 </head>
 <body>
 
 	<c:choose>
 		<c:when test="${session.loggedin == true}">
+			<p>Welcome to dropmusic, ${session.username}. Please choose an action.</p>
 			<s:form action="main_menu" method="post">
-				<s:submit name="multiplex" value="Post" />
-				<s:submit name="multiplex" value="Edit" />
+				<c:choose>
+					<c:when test="${session.editor == true}">
+						<s:submit name="multiplex" value="Post" />
+						<s:submit name="multiplex" value="Edit" />
+						<s:submit name="multiplex" value="Grant Editor Privilege" />
+					</c:when>
+				</c:choose>
 				<s:submit name="multiplex" value="Details" />
 				<s:submit name="multiplex" value="Search" />
-				<s:submit name="multiplex" value="Grant Editor Privilege" />
 				<s:submit name="multiplex" value="Dropbox" />
 				<s:submit name="multiplex" value="Logout" />
 			</s:form>

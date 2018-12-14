@@ -20,6 +20,8 @@
       <root url="jar://$PROJECT_DIR$/lib/blockingMap.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ideaLibSources/xwork-core-2.3.16.3-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

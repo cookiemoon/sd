@@ -3,6 +3,8 @@
  */
 package client.action;
 
+import Shared.Message;
+import Shared.User;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
 
@@ -14,25 +16,33 @@ public class LoginAction extends ActionSupport implements SessionAware {
 	private static final long serialVersionUID = 4L;
 	private Map<String, Object> session;
 	private String username = null, password = null;
+	private String error = null;
 
 	@Override
 	public String execute() {
+		System.out.println(this.username);
 		if(this.username != null && !username.equals("")) {
 			this.getUserBean().setUsername(this.username);
 			this.getUserBean().setPassword(this.password);
 			try {
-				if (this.getUserBean().login()) {
+				Message<User> rsp = this.getUserBean().login();
+				if (rsp.isAccepted()) {
 					session.put("username", username);
 					session.put("loggedin", true); // this marks the user as logged in
+					session.put("editor", rsp.getObj().isEditor_f());
 					return SUCCESS;
+				} else {
+					this.error = rsp.getErrors();
+					return LOGIN;
 				}
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 			return LOGIN;
 		}
-		else
-			return LOGIN;
+		else {
+			return SUCCESS;
+		}
 	}
 	
 	public void setUsername(String username) {

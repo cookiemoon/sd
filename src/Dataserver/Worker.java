@@ -223,6 +223,7 @@ public class Worker implements Runnable {
             }
             return s;
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new MalformedQuery("Couldn't prepare the SQL statement");
         }
     }
@@ -652,7 +653,7 @@ public class Worker implements Runnable {
                 messageClientError(req, "User does not exist");
             } else {
                 if (inputUtil.hashedPass(user.getPwd()).equals(real.getHashedPwd()))
-                    messageClientSuccess(req, user);
+                    messageClientSuccess(req, real);
                 else {
                     messageClientError(req, "The email or password is incorrect");
                 }
@@ -683,16 +684,14 @@ public class Worker implements Runnable {
                 user.setSesh_hash(UUID.randomUUID().toString());
 
                 if (checkAnyUser(con)) {
-                    user.setAdmin_f(false);
                     user.setEditor_f(false);
                 } else {
-                    user.setAdmin_f(true);
                     user.setEditor_f(true);
                 }
                 postUser(user, con);
                 con.commit();
 
-                messageClientSuccess(req, user);
+                messageClientSuccess(req, real);
             } else {
                 messageClientError(req, "Email is already in use");
             }

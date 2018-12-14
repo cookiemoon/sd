@@ -14,7 +14,7 @@ public class MakeEditorAction extends ActionSupport implements SessionAware {
 
     @Override
     public String execute() throws RemoteException {
-        if(this.getUserBean().grantPrivilege(this.grantee))
+        if(this.getUserBean().grantPrivilege(this.grantee).isAccepted())
             return SUCCESS;
         else
             return ERROR;

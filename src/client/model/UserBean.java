@@ -18,31 +18,30 @@ import rmiserver.RMIServerInterface;
 
 public class UserBean {
 	private ServerInterface server;
-	private User user;
+	private User user = new User(null, null);
 
 	public UserBean() {
 		try {
-			server = (ServerInterface) Naming.lookup("rmi://localhost:1100/server");
-			this.user = new User(null, null);
+			server = (ServerInterface) Naming.lookup("rmi://localhost:1100/RMIServer");
 		}
 		catch(NotBoundException|MalformedURLException|RemoteException e) {
-			e.printStackTrace(); // what happens *after* we reach this line?
+			e.printStackTrace();
 		}
 	}
 
-	public boolean login() throws RemoteException {
+	public Message<User> login() throws RemoteException {
 		Message<User> rsp = server.userLogin(this.user);
-		return rsp.isAccepted();
+		return rsp;
 	}
 
-	public boolean register() throws RemoteException {
+	public Message<User> register() throws RemoteException {
 		Message<User> rsp = server.userRegister(this.user);
-		return rsp.isAccepted();
+		return rsp;
 	}
 
-	public boolean grantPrivilege(String grantee) throws RemoteException {
+	public MessageIdentified<String> grantPrivilege(String grantee) throws RemoteException {
 		MessageIdentified<String> rsp = server.makeEditor(this.user, grantee);
-		return rsp.isAccepted();
+		return rsp;
 	}
 	
 	public void setUsername(String username) {

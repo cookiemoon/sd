@@ -11,7 +11,7 @@
 <body>
 <p><b>Posting Menu</b></p>
 <c:choose>
-    <s:textfield value="What do you want to post?" />
+    <p>"What do you want to post?"</p>
     <c:when test="${session.loggedin == true}">
         <s:form action="post" method="post">
             <s:submit name="multiplex" value="Music" />

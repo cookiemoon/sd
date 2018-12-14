@@ -9,10 +9,13 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 import RMI.ServerInterface;
 import Shared.*;
-import rmiserver.RMIServerInterface;
+import com.google.gson.reflect.TypeToken;
 
 public class Bean {
 	private ServerInterface server;
@@ -21,6 +24,7 @@ public class Bean {
 	private Album album = new Album(-1, null);
 	private Artist artist = new Artist(-1, null, null);
 	private Review review = new Review(-1, null, null, null);
+	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	public Bean() {
 		try {
@@ -32,17 +36,20 @@ public class Bean {
 	}
 
 	public Message<User> login() throws RemoteException {
-		Message<User> rsp = server.userLogin(this.user);
+		String json = server.userLogin(this.user);
+		Message<User> rsp = gson.fromJson(json, new TypeToken<Message<Shared.User>>() {}.getType());
 		return rsp;
 	}
 
 	public Message<User> register() throws RemoteException {
-		Message<User> rsp = server.userRegister(this.user);
+		String json = server.userRegister(this.user);
+		Message<User> rsp = gson.fromJson(json, new TypeToken<Message<Shared.User>>() {}.getType());
 		return rsp;
 	}
 
 	public MessageIdentified<String> grantPrivilege(String grantee) throws RemoteException {
-		MessageIdentified<String> rsp = server.makeEditor(this.user, grantee);
+		String json = server.makeEditor(this.user, grantee);
+		MessageIdentified<String> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<User>>() {}.getType());
 		return rsp;
 	}
 	

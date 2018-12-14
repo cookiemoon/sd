@@ -16,32 +16,36 @@ public class LoginAction extends ActionSupport implements SessionAware {
 	private static final long serialVersionUID = 4L;
 	private Map<String, Object> session;
 	private String username = null, password = null;
-	private String error = null;
 
 	@Override
 	public String execute() {
-		System.out.println(this.username);
 		if(this.username != null && !username.equals("")) {
 			this.getBean().setUsername(this.username);
 			this.getBean().setPassword(this.password);
 			try {
 				Message<User> rsp = this.getBean().login();
+				System.out.println(rsp);
 				if (rsp.isAccepted()) {
 					session.put("username", username);
 					session.put("loggedin", true); // this marks the user as logged in
 					session.put("editor", rsp.getObj().isEditor_f());
 					return SUCCESS;
 				} else {
-					this.error = rsp.getErrors();
+					session.put("error", rsp.getErrors());
+					session.put("back", "login");
 					return LOGIN;
 				}
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			return INPUT;
+			session.put("error", "Server error.");
+			session.put("back", "login");
+			return LOGIN;
 		}
 		else {
-			return SUCCESS;
+			session.put("error", "Please do not leave any empty fields.");
+			session.put("back", "login");
+			return INPUT;
 		}
 	}
 	

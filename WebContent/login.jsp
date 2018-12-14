@@ -16,7 +16,10 @@
 		<s:textfield name="password" /><br>
 		<s:submit value="Login"/>
 	</s:form>
+    <p id="error"></p>
 	<a href="register.jsp" >Don't have an account? Click here to register.</a>
+
+
 
 </body>
 </html>

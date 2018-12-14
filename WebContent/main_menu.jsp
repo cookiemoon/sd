@@ -16,14 +16,14 @@
 			<s:form action="main_menu" method="post">
 				<c:choose>
 					<c:when test="${session.editor == true}">
-						<s:submit name="multiplex" value="Post" />
-						<s:submit name="multiplex" value="Edit" />
-						<s:submit name="multiplex" value="Grant Editor Privilege" />
+						<s:submit name="multiplex" value="Post" /><br>
+						<s:submit name="multiplex" value="Edit" /><br>
+						<s:submit name="multiplex" value="Grant Editor Privilege" /><br>
 					</c:when>
 				</c:choose>
-				<s:submit name="multiplex" value="Details" />
-				<s:submit name="multiplex" value="Search" />
-				<s:submit name="multiplex" value="Dropbox" />
+				<s:submit name="multiplex" value="Details" /><br>
+				<s:submit name="multiplex" value="Search" /><br>
+				<s:submit name="multiplex" value="Dropbox" /><br>
 				<s:submit name="multiplex" value="Logout" />
 			</s:form>
 		</c:when>

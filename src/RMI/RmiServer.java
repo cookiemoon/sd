@@ -73,147 +73,147 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public Message<User> userRegister(User obj) {
+    public String userRegister(User obj) {
         int messageID = msgID.getAndIncrement();
 
         String json = JSON.messageRequest("register", obj, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<Shared.User>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public Message<User> userLogin(User obj) {
+    public String userLogin(User obj) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageRequest("login", obj, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<Shared.User>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public MessageIdentified<Music> postMusic(User editor, Music m) {
+    public String postMusic(User editor, Music m) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("post", "music", editor, m, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Music>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public MessageIdentified<Artist> postArtist(User editor, Artist a) {
+    public String postArtist(User editor, Artist a) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("post", "artist", editor, a, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Artist>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public MessageIdentified<Album> postAlbum(User editor, Album album) {
+    public String postAlbum(User editor, Album album) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("post", "album", editor, album, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Album>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public MessageIdentified<MusicFile> postMusicFile(MusicFile mf) {
+    public String postMusicFile(MusicFile mf) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("post", "files", mf.getOwner(), mf, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<MusicFile>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public Message<Review> postReview(Review review) {
+    public String postReview(Review review) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageRequest("review", review, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<Review>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public Message<List<Album>> searchAlbum(List<String> searchTerms) {
+    public String searchAlbum(List<String> searchTerms) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageRequest("search_album", searchTerms, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<List<Album>>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public Message<List<Music>> searchMusic(List<String> searchTerms) {
+    public String searchMusic(List<String> searchTerms) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageRequest("search_music", searchTerms, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<List<Music>>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public Message<List<Artist>> searchArtist(List<String> searchTerms) {
+    public String searchArtist(List<String> searchTerms) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageRequest("search_artist", searchTerms, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<List<Music>>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public MessageIdentified<Album> editAlbum(User self, Album selected) {
+    public String editAlbum(User self, Album selected) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("edit_album", "album", self, selected, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Album>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public MessageIdentified<Artist> editArtist(User self, Artist selected) {
+    public String editArtist(User self, Artist selected) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("edit_artist", "artist", self, selected, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Artist>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public MessageIdentified<Music> editMusic(User self, Music selected) {
+    public String editMusic(User self, Music selected) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("edit_music", "music", self, selected, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<Music>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public Message<Review> editReview(Review review) {
+    public String editReview(Review review) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageRequest("edit_review", review, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<Review>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public Message<Album> detailsAlbum(Album selected) {
+    public String detailsAlbum(Album selected) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageRequest("details_album", selected, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<Album>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public Message<Artist> detailsArtist(Artist selected) {
+    public String detailsArtist(Artist selected) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageRequest("details_artist", selected, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<Artist>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public Message<Music> detailsMusic(Music selected) {
+    public String detailsMusic(Music selected) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageRequest("details_music", selected, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<Message<Music>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 
     @Override
-    public MessageIdentified<String> makeEditor(User self, String grantee) {
+    public String makeEditor(User self, String grantee) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("make_editor", "null", self, grantee, messageID);
 
-        return gson.fromJson(waitForResponse(json, messageID), new TypeToken<MessageIdentified<String>>() {}.getType());
+        return waitForResponse(json, messageID);
     }
 }

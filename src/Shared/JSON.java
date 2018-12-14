@@ -27,42 +27,9 @@ public class JSON {
         return gson.toJson(msg);
     }
 
-    public static <T> String messageIdResponse(MessageIdentified<T> req, String uuid,  boolean accepted, String errors) {
+    public static <T> String messageIdResponse(MessageIdentified<T> req, String uuid, boolean accepted, String errors) {
         req.setObj(null);
         req.setState("response");
         return gson.toJson(new MessageIdentified<>(req, uuid, accepted, errors));
-    }
-
-    public static String response(String uuid, boolean accepted, String errors) {
-        Gson gson;
-        gson = new GsonBuilder().setPrettyPrinting().create();
-        Message<String> resp = new Message<String>(null, uuid, accepted, errors);
-
-        resp.setState("response");
-        String json = gson.toJson(resp);
-
-        return json;
-    }
-
-    public static String response(String content, String uuid, boolean accepted, String errors) {
-        Gson gson;
-        gson = new GsonBuilder().setPrettyPrinting().create();
-        Message<String> resp = new Message<String>(null, uuid, accepted, errors, content);
-
-        resp.setState("response");
-        String json = gson.toJson(resp);
-
-        return json;
-    }
-
-    public static String searchResponse(String content, String uuid, boolean accepted, String errors) {
-        Gson gson;
-        gson = new GsonBuilder().setPrettyPrinting().create();
-        Message<String> resp = new Message<String>(null, uuid, accepted, errors, content);
-
-        resp.setState("response");
-        String json = gson.toJson(resp);
-
-        return json;
     }
 }

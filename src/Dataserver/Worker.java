@@ -648,15 +648,14 @@ public class Worker implements Runnable {
             con.setAutoCommit(false);
 
             User real = getUser(user, con);
-            System.out.println(real.isEditor_f());
 
             if (real==null) {
-                messageClientError(req, "User does not exist");
+                messageClientError(req, "The email or password is incorrect.");
             } else {
                 if (inputUtil.hashedPass(user.getPwd()).equals(real.getPwd()))
                     messageClientSuccess(req, real);
                 else {
-                    messageClientError(req, "The email or password is incorrect");
+                    messageClientError(req, "The email or password is incorrect.");
                 }
             }
 
@@ -694,7 +693,7 @@ public class Worker implements Runnable {
 
                 messageClientSuccess(req, user);
             } else {
-                messageClientError(req, "Email is already in use");
+                messageClientError(req, "Email is already in use.");
             }
             con.close();
         } catch (SQLException e) {

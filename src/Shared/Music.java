@@ -137,4 +137,8 @@ public class Music implements Serializable {
     }
 
     public Music getOld() { return this.old; }
+
+    public void setAlbum_id(int album_id) {
+        this.album_id.add(album_id);
+    }
 }

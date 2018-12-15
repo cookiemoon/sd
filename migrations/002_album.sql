@@ -4,6 +4,5 @@ CREATE TABLE album (
     adesc   TEXT,
     label   VARCHAR(128),
     release_date DATE NOT NULL,
-    deleted BOOL NOT NULL,
     PRIMARY KEY(id)
 );

@@ -250,12 +250,19 @@ public class Worker implements Runnable {
                     album.addMusic(m);
                 }
 
-                stmnt = setFields(con, "get-album-reviews", data.getID());
+                stmnt = setFields(con, "get-album-review", data.getID());
                 rs = stmnt.executeQuery();
 
                 while(rs.next()) {
                     Review r = getReview(new Review(0, "", new User(rs.getString("users_email"), ""), new Album(rs.getInt("album_id"), "")), con);
                     album.addReview(r);
+                }
+
+                stmnt = setFields(con, "get-album-editor", data.getID());
+                rs = stmnt.executeQuery();
+
+                while(rs.next()) {
+                    album.addEditor(rs.getString("users_email"));
                 }
 
                 return album;
@@ -277,7 +284,7 @@ public class Worker implements Runnable {
             ResultSet rs = stmnt.executeQuery();
 
             if(rs.next()) {
-                Artist artist = new Artist(rs.getInt("id"), rs.getString("name"), rs.getString("adesc"));
+                Artist artist = new Artist(rs.getInt("id"), rs.getString("aname"), rs.getString("adesc"));
 
                 stmnt = setFields(con, "get-artist-album", data.getID());
                 rs = stmnt.executeQuery();
@@ -285,6 +292,13 @@ public class Worker implements Runnable {
                 while(rs.next()) {
                     Album a = getAlbum(new Album(rs.getInt("album_id"), ""), con);
                     artist.addAlbum(a);
+                }
+
+                stmnt = setFields(con, "get-artist-editor", data.getID());
+                rs = stmnt.executeQuery();
+
+                while(rs.next()) {
+                    artist.addEditor(rs.getString("users_email"));
                 }
 
                 return artist;
@@ -411,9 +425,11 @@ public class Worker implements Runnable {
 
                 List<String> genres = data.getGenres();
 
-                for (String g : genres) {
-                    stmnt = setFields(con, "post-album-genre", rs.getInt("id"), g);
-                    stmnt.executeUpdate();
+                if(genres!=null) {
+                    for (String g : genres) {
+                        stmnt = setFields(con, "post-album-genre", rs.getInt("id"), g);
+                        stmnt.executeUpdate();
+                    }
                 }
 
                 stmnt = setFields(con, "post-album-editor", rs.getInt("id"), editor.getEmail());
@@ -501,9 +517,11 @@ public class Worker implements Runnable {
 
                 List<String> genres = data.getGenres();
 
-                for (String g : genres) {
-                    stmnt = setFields(con, "post-music-genre", rs.getInt("id"), g);
-                    stmnt.executeUpdate();
+                if(genres!=null) {
+                    for (String g : genres) {
+                        stmnt = setFields(con, "post-music-genre", rs.getInt("id"), g);
+                        stmnt.executeUpdate();
+                    }
                 }
                 return rs;
             } else {
@@ -756,7 +774,7 @@ public class Worker implements Runnable {
 
                 ResultSet rs = postMusic(upper, music, con);
 
-                if(rs.isBeforeFirst()) {
+                if(rs!=null) {
                     con.commit();
                     con.close();
 
@@ -803,7 +821,7 @@ public class Worker implements Runnable {
             } else {
                 ResultSet rs = postAlbum(user, upper, album, con);
 
-                if(rs.isBeforeFirst()) {
+                if(rs!=null) {
 
                     con.commit();
                     con.close();
@@ -905,7 +923,7 @@ public class Worker implements Runnable {
 
             ResultSet rs = editMusic(music.getOld(), music, con);
 
-            if(rs.isBeforeFirst()) {
+            if(rs!=null) {
 
                 con.commit();
                 con.close();
@@ -941,12 +959,12 @@ public class Worker implements Runnable {
 
             ResultSet rs = editAlbum(user, album.getOld(), album, con);
 
-            if(rs.isBeforeFirst()) {
+            if(rs!=null) {
 
                 con.commit();
                 con.close();
 
-                messageClientSuccess(req, null);
+                messageClientSuccess(req, getAlbum(album, con));
             } else {
                 internalServerError(con, req);
                 con.close();
@@ -973,12 +991,12 @@ public class Worker implements Runnable {
 
             ResultSet rs = editArtist(user, artist.getOld(), artist, con);
 
-            if(rs.isBeforeFirst()) {
+            if(rs!=null) {
 
                 con.commit();
                 con.close();
 
-                messageClientSuccess(req, null);
+                messageClientSuccess(req, getArtist(artist, con));
             } else {
                 internalServerError(con, req);
                 con.close();
@@ -1004,7 +1022,7 @@ public class Worker implements Runnable {
 
             ResultSet rs = editReview(review, con);
 
-            if(rs.isBeforeFirst()) {
+            if(rs!=null) {
 
                 con.commit();
                 con.close();

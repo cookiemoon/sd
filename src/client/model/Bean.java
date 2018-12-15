@@ -54,6 +54,18 @@ public class Bean {
 		MessageIdentified<Artist> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<Shared.Artist>>() {}.getType());
 		return rsp;
 	}
+
+	public MessageIdentified<Music> postMusic(Music obj) throws RemoteException {
+		String json = server.postMusic(this.user, obj);
+		MessageIdentified<Music> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<Shared.Music>>() {}.getType());
+		return rsp;
+	}
+
+	public MessageIdentified<Album> postAlbum(Album obj) throws RemoteException {
+		String json = server.postAlbum(this.user, obj);
+		MessageIdentified<Album> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<Shared.Album>>() {}.getType());
+		return rsp;
+	}
 	
 	public void setUsername(String username) {
 		this.user.setEmail(username);

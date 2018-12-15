@@ -18,10 +18,11 @@ public class Album implements Serializable {
     List<String> genres;
     static final long serialVersionUID = 420L;
     String details;
-    private List<Integer> artist_id;
+    private List<Integer> artist_id = new ArrayList<>();
     private Album old;
     private List<Music> songs = new ArrayList<>();
     private List<Review> reviews = new ArrayList<>();
+    private List<String> editors = new ArrayList<>();
 
     public Album(int id, String title) {
         this.id = id;
@@ -109,6 +110,10 @@ public class Album implements Serializable {
         this.groupName = groupName;
     }
 
+    public void setArtist_id(int artist_id) {
+        this.artist_id.add(artist_id);
+    }
+
     public List<Integer> getMusicIDs() { return this.musicIDs; }
 
     public void edit() {
@@ -148,5 +153,9 @@ public class Album implements Serializable {
 
     public Album getOld() {
         return this.old;
+    }
+
+    public void addEditor(String users_email) {
+        this.editors.add(users_email);
     }
 }

@@ -5,14 +5,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>DROPMUSIC : main menu</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>DROPMUSIC : main menu</title>
+	<script type="application/javascript" src="js/notifications.js"></script>
 </head>
 <body>
 <p><b>Main Menu</b></p>
 	<c:choose>
 		<c:when test="${session.loggedin == true}">
 			<p>Welcome to dropmusic, ${session.username}. Please choose an action.</p>
+			<script>var username = ('${session.username}')</script>
 			<s:form action="main_menu" method="post">
 				<c:choose>
 					<c:when test="${session.editor == true}">

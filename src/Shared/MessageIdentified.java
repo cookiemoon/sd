@@ -37,14 +37,14 @@ public class MessageIdentified<T> implements Serializable {
         this.obj = obj;
     }
 
-    public MessageIdentified(MessageIdentified<T> req, String uuid, boolean accepted, String errors) {
+    public MessageIdentified(MessageIdentified<T> req, String uuid, boolean accepted, String errors, T obj) {
         this.type = req.getType();
         this.state = "response";
         this.uuid = uuid;
         this.msgid = req.getMsgid();
         this.accepted = accepted;
         this.errors = errors;
-        this.obj = null;
+        this.obj = obj;
     }
 
     public boolean embedMsgid(int id) {

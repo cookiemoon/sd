@@ -141,4 +141,8 @@ public class Music implements Serializable {
     public void setAlbum_id(int album_id) {
         this.album_id.add(album_id);
     }
+
+    public void setOld(Music music) {
+        this.old = music;
+    }
 }

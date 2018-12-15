@@ -187,14 +187,14 @@ public class Worker implements Runnable {
     private <T> void messageClientError(MessageIdentified<T> req, String errors) {
         NetworkUtil.multicastSend(
                 RESPONSE_PORT,
-                JSON.messageIdResponse(req, uuid, false, errors)
+                JSON.messageIdResponse(req, uuid, false, errors, null)
         );
     }
 
     private <T> void messageClientSuccess(MessageIdentified<T> req, T obj) {
         NetworkUtil.multicastSend(
                 RESPONSE_PORT,
-                JSON.messageIdResponse(req, uuid, true, null)
+                JSON.messageIdResponse(req, uuid, true, null, obj)
         );
     }
 
@@ -572,13 +572,21 @@ public class Worker implements Runnable {
 
     private ResultSet editAlbum(User editor, Album old, Album data, Connection con) {
         try {
-            PreparedStatement stmnt = setFields(con, "update-album", data.getTitle(), data.getDescription(), data.getReleaseDate(), data.getLabel(), old.getID());
+            PreparedStatement stmnt = setFields(con, "update-album",
+                    inputUtil.oldOrNew(old.getTitle(), data.getTitle()),
+                    inputUtil.oldOrNew(old.getDescription(), data.getDescription()),
+                    inputUtil.nullOrNew(old.getReleaseDate(), data.getReleaseDate()),
+                    inputUtil.oldOrNew(old.getLabel(), data.getLabel()),
+                    old.getID());
+
             stmnt.executeUpdate();
             ResultSet rs = stmnt.getGeneratedKeys();
 
-            if (!old.getDescription().equals(data.getDescription())) {
-                stmnt = setFields(con, "post-album-editor", old.getID(), editor.getEmail());
-                stmnt.executeUpdate();
+            if (!inputUtil.oldOrNew(old.getDescription(), data.getDescription()).equals(old.getDescription())) {
+                if(!setFields(con, "get-this-album-editor", old.getID(), editor.getEmail()).executeQuery().isBeforeFirst()) {
+                    stmnt = setFields(con, "post-album-editor", old.getID(), editor.getEmail());
+                    stmnt.executeUpdate();
+                }
             }
 
             return rs;
@@ -593,7 +601,17 @@ public class Worker implements Runnable {
 
     private ResultSet editArtist(User editor, Artist old, Artist data, Connection con) {
         try {
-            PreparedStatement stmnt = setFields(con, "update-artist", data.getName(), data.getDescription(), old.getID());
+            PreparedStatement stmnt = setFields(con, "update-artist",
+                    inputUtil.oldOrNew(old.getName(), data.getName()),
+                    inputUtil.oldOrNew(old.getDescription(), data.getDescription()),
+                    old.getID());
+
+            if (!inputUtil.oldOrNew(old.getDescription(), data.getDescription()).equals(old.getDescription())) {
+                if(!setFields(con, "get-this-artist-editor", old.getID(), editor.getEmail()).executeQuery().isBeforeFirst()) {
+                    stmnt = setFields(con, "post-artist-editor", old.getID(), editor.getEmail());
+                    stmnt.executeUpdate();
+                }
+            }
 
             stmnt.executeUpdate();
             ResultSet rs = stmnt.getGeneratedKeys();
@@ -610,7 +628,12 @@ public class Worker implements Runnable {
 
     private ResultSet editMusic(Music old, Music data, Connection con) {
         try {
-            PreparedStatement stmnt = setFields(con, "update-music", data.getTitle(), data.getDuration(), data.getLyrics(), old.getID());
+            PreparedStatement stmnt = setFields(con, "update-music",
+                    inputUtil.oldOrNew(old.getTitle(), data.getTitle()),
+                    inputUtil.oldOrNew(old.getDuration(), data.getDuration()),
+                    inputUtil.oldOrNew(old.getLyrics(), data.getLyrics()),
+                    old.getID());
+
             stmnt.executeUpdate();
             ResultSet rs = stmnt.getGeneratedKeys();
 
@@ -921,14 +944,16 @@ public class Worker implements Runnable {
 
             userIsEditor(user);
 
-            ResultSet rs = editMusic(music.getOld(), music, con);
+            Music old = getMusic(music.getOld(), con);
+
+            ResultSet rs = editMusic(old, music, con);
 
             if(rs!=null) {
 
                 con.commit();
                 con.close();
 
-                messageClientSuccess(req, null);
+                messageClientSuccess(req, music);
             } else {
                 internalServerError(con, req);
                 con.close();
@@ -953,18 +978,21 @@ public class Worker implements Runnable {
 
             userIsEditor(user);
 
-            con.setAutoCommit(false);
+            Album old = getAlbum(album.getOld(), con);
 
-            userIsEditor(user);
-
-            ResultSet rs = editAlbum(user, album.getOld(), album, con);
+            ResultSet rs = editAlbum(user, old, album, con);
 
             if(rs!=null) {
+
+                Album real = getAlbum(album, con);
+
+                if(!inputUtil.oldOrNew(old.getDescription(), album.getDescription()).equals(old.getDescription()))
+                    real.setEdited(true);
 
                 con.commit();
                 con.close();
 
-                messageClientSuccess(req, getAlbum(album, con));
+                messageClientSuccess(req, real);
             } else {
                 internalServerError(con, req);
                 con.close();
@@ -989,14 +1017,21 @@ public class Worker implements Runnable {
 
             userIsEditor(user);
 
-            ResultSet rs = editArtist(user, artist.getOld(), artist, con);
+            Artist old = getArtist(artist.getOld(), con);
+
+            ResultSet rs = editArtist(user, old, artist, con);
 
             if(rs!=null) {
+
+                Artist real = getArtist(artist, con);
+
+                if(!inputUtil.oldOrNew(old.getDescription(), artist.getDescription()).equals(old.getDescription()))
+                    real.setEdited(true);
 
                 con.commit();
                 con.close();
 
-                messageClientSuccess(req, getArtist(artist, con));
+                messageClientSuccess(req, real);
             } else {
                 internalServerError(con, req);
                 con.close();

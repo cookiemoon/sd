@@ -1,37 +1,35 @@
 package client.action;
 
+import Shared.*;
 import client.model.Bean;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
-import Shared.*;
 
-public class PostArtistAction extends ActionSupport implements SessionAware {
+public class EditMusicAction extends ActionSupport implements SessionAware {
     private static final long serialVersionUID = 4L;
     private Map<String, Object> session;
-    private String name;
-    private String desc;
-    private String start;
-    private String end;
-    private Artist obj = new Artist(-1, "", "");
-
+    private String musicID;
+    private String title = "";
+    private String duration = "";
+    private String lyrics = "";
+    private Music obj = new Music(-1, "");
 
     @Override
     public String execute() {
-        if(inputUtil.notEmptyOrNull(name, desc, start, end)) {
-            obj.setName(name);
-            obj.setDescription(desc);
-            List<Calendar> period = new ArrayList<>();
-            period.add(inputUtil.toCalendar(start));
-            period.add(inputUtil.toCalendar(end));
-            obj.setPeriod(period);
+        if(inputUtil.notEmptyOrNull(musicID)) {
+            obj.setTitle(title);
+            obj.setLyrics(lyrics);
+            obj.setID(Integer.parseInt(musicID));
+            if(inputUtil.notEmptyOrNull(duration))
+                obj.setDuration(Integer.parseInt(duration));
+            else
+                obj.setDuration(-1);
+            obj.setOld(new Music(Integer.parseInt(musicID), ""));
             try {
-                MessageIdentified<Artist> rsp = this.getBean().postArtist(obj);
+                MessageIdentified<Music> rsp = this.getBean().editMusic(obj);
                 System.out.println(rsp);
                 if (rsp.isAccepted()) {
                     return SUCCESS;
@@ -53,20 +51,20 @@ public class PostArtistAction extends ActionSupport implements SessionAware {
         }
     }
 
-    public void setEnd(String end) {
-        this.end = end;
+    public void setMusicID(String musicID) {
+        this.musicID = musicID;
     }
 
-    public void setStart(String start) {
-        this.start = start;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLyrics(String lyrics) {
+        this.lyrics = lyrics;
     }
 
     public Bean getBean() {

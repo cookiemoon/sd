@@ -1,37 +1,31 @@
 package client.action;
 
+import Shared.*;
+import Shared.inputUtil;
 import client.model.Bean;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
-import Shared.*;
 
-public class PostArtistAction extends ActionSupport implements SessionAware {
+public class EditArtistAction extends ActionSupport implements SessionAware {
     private static final long serialVersionUID = 4L;
     private Map<String, Object> session;
-    private String name;
-    private String desc;
-    private String start;
-    private String end;
+    private String artistID;
+    private String name = "";
+    private String desc = "";
     private Artist obj = new Artist(-1, "", "");
-
 
     @Override
     public String execute() {
-        if(inputUtil.notEmptyOrNull(name, desc, start, end)) {
+        if(inputUtil.notEmptyOrNull(artistID)) {
             obj.setName(name);
             obj.setDescription(desc);
-            List<Calendar> period = new ArrayList<>();
-            period.add(inputUtil.toCalendar(start));
-            period.add(inputUtil.toCalendar(end));
-            obj.setPeriod(period);
+            obj.setId(Integer.parseInt(artistID));
+            obj.setOld(new Artist(Integer.parseInt(artistID), "", ""));
             try {
-                MessageIdentified<Artist> rsp = this.getBean().postArtist(obj);
+                MessageIdentified<Artist> rsp = this.getBean().editArtist(obj);
                 System.out.println(rsp);
                 if (rsp.isAccepted()) {
                     return SUCCESS;
@@ -53,12 +47,8 @@ public class PostArtistAction extends ActionSupport implements SessionAware {
         }
     }
 
-    public void setEnd(String end) {
-        this.end = end;
-    }
-
-    public void setStart(String start) {
-        this.start = start;
+    public void setArtistID(String artistID) {
+        this.artistID = artistID;
     }
 
     public void setDesc(String desc) {

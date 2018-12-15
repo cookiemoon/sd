@@ -23,6 +23,7 @@ public class Album implements Serializable {
     private List<Music> songs = new ArrayList<>();
     private List<Review> reviews = new ArrayList<>();
     private List<String> editors = new ArrayList<>();
+    private boolean edited = false;
 
     public Album(int id, String title) {
         this.id = id;
@@ -157,5 +158,17 @@ public class Album implements Serializable {
 
     public void addEditor(String users_email) {
         this.editors.add(users_email);
+    }
+
+    public void setEdited(boolean edited) {
+        this.edited = edited;
+    }
+
+    public boolean isEdited() {
+        return edited;
+    }
+
+    public void setOld(Album album) {
+        this.old = album;
     }
 }

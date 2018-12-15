@@ -27,6 +27,26 @@ public class inputUtil implements Serializable {
         return true;
     }
 
+    static public int oldOrNew(int old_i, int new_i) {
+        if(new_i <= 0)
+            return old_i;
+        return new_i;
+    }
+
+    static public Object nullOrNew(Object old_o, Object new_o) {
+        if(new_o == null)
+            return old_o;
+        return new_o;
+    }
+
+    static public String oldOrNew(String old_s, String new_s) {
+        if(new_s == null || new_s.equals("") || new_s.equals(old_s)) {
+            return old_s;
+        } else {
+            return new_s;
+        }
+    }
+
     static public Calendar toCalendar(String date) {
         try {
             String[] parts = date.split("/");

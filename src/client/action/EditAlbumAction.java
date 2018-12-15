@@ -1,37 +1,38 @@
 package client.action;
 
+import Shared.*;
+import Shared.inputUtil;
 import client.model.Bean;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
-import Shared.*;
 
-public class PostArtistAction extends ActionSupport implements SessionAware {
+public class EditAlbumAction extends ActionSupport implements SessionAware {
     private static final long serialVersionUID = 4L;
     private Map<String, Object> session;
-    private String name;
-    private String desc;
-    private String start;
-    private String end;
-    private Artist obj = new Artist(-1, "", "");
-
+    private String albumID;
+    private String title = "";
+    private String desc = "";
+    private String label = "";
+    private String release_date = "";
+    private Album obj = new Album(-1, "");
 
     @Override
     public String execute() {
-        if(inputUtil.notEmptyOrNull(name, desc, start, end)) {
-            obj.setName(name);
+        if(inputUtil.notEmptyOrNull(albumID)) {
+            obj.setTitle(title);
             obj.setDescription(desc);
-            List<Calendar> period = new ArrayList<>();
-            period.add(inputUtil.toCalendar(start));
-            period.add(inputUtil.toCalendar(end));
-            obj.setPeriod(period);
+            obj.setId(Integer.parseInt(albumID));
+            obj.setLabel(label);
+            if(inputUtil.notEmptyOrNull(release_date))
+                obj.setReleaseDate(inputUtil.toCalendar(release_date));
+            else
+                obj.setReleaseDate(null);
+            obj.setOld(new Album(Integer.parseInt(albumID), ""));
             try {
-                MessageIdentified<Artist> rsp = this.getBean().postArtist(obj);
+                MessageIdentified<Album> rsp = this.getBean().editAlbum(obj);
                 System.out.println(rsp);
                 if (rsp.isAccepted()) {
                     return SUCCESS;
@@ -53,20 +54,24 @@ public class PostArtistAction extends ActionSupport implements SessionAware {
         }
     }
 
-    public void setEnd(String end) {
-        this.end = end;
+    public void setAlbumID(String albumID) {
+        this.albumID = albumID;
     }
 
-    public void setStart(String start) {
-        this.start = start;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setRelease_date(String release_date) {
+        this.release_date = release_date;
     }
 
     public void setDesc(String desc) {
         this.desc = desc;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Bean getBean() {

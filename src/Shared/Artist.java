@@ -16,6 +16,16 @@ public class Artist implements Serializable {
     private List<Album> albums = new ArrayList<>();
     private List<String> editors = new ArrayList<>();
 
+    public boolean isEdited() {
+        return edited;
+    }
+
+    public void setEdited(boolean edited) {
+        this.edited = edited;
+    }
+
+    private boolean edited = false;
+
     public Artist(int id, String name, String description, List<Calendar> period) {
         this.id = id;
         this.name = name;
@@ -99,5 +109,9 @@ public class Artist implements Serializable {
 
     public void addEditor(String users_email) {
         this.editors.add(users_email);
+    }
+
+    public void setOld(Artist artist) {
+        this.old = artist;
     }
 }

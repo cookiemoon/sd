@@ -27,9 +27,9 @@ public class JSON {
         return gson.toJson(msg);
     }
 
-    public static <T> String messageIdResponse(MessageIdentified<T> req, String uuid, boolean accepted, String errors) {
+    public static <T> String messageIdResponse(MessageIdentified<T> req, String uuid, boolean accepted, String errors, T obj) {
         req.setObj(null);
         req.setState("response");
-        return gson.toJson(new MessageIdentified<>(req, uuid, accepted, errors));
+        return gson.toJson(new MessageIdentified<>(req, uuid, accepted, errors, obj));
     }
 }

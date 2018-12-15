@@ -12,7 +12,7 @@ public class User implements Serializable {
     private String email;
     private String pwd;
     private String sesh_hash;
-    private boolean editor_f;
+    private boolean editor;
 
     public static User newUser() {
         String username = inputUtil.promptStr("Enter your username: ");
@@ -21,24 +21,24 @@ public class User implements Serializable {
     }
 
 
-    public User(String email, String pwd, String sesh_hash, boolean editor_f) {
+    public User(String email, String pwd, String sesh_hash, boolean editor) {
         this.email = email;
         this.pwd = pwd;
         this.sesh_hash = sesh_hash;
-        this.editor_f = editor_f;
+        this.editor = editor;
     }
 
     public User(String email, String pwd) {
         this.email = email;
         this.pwd = pwd;
         this.sesh_hash = null;
-        this.editor_f = false;
+        this.editor = false;
     }
 
-    public User(String email, String pwd, boolean editor_f ) {
+    public User(String email, String pwd, boolean editor ) {
         this.email = email;
         this.pwd = pwd;
-        this.editor_f = editor_f;
+        this.editor = editor;
     }
 
     public static long getSerialVersionUID() {
@@ -69,12 +69,12 @@ public class User implements Serializable {
         this.sesh_hash = sesh_hash;
     }
 
-    public boolean isEditor_f() {
-        return editor_f;
+    public boolean isEditor() {
+        return editor;
     }
 
-    public void setEditor_f(boolean editor_f) {
-        this.editor_f = editor_f;
+    public void setEditor(boolean editor) {
+        this.editor = editor;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class User implements Serializable {
                 "email='" + email + '\'' +
                 ", pwd='" + pwd + '\'' +
                 ", sesh_hash='" + sesh_hash + '\'' +
-                ", editor_f=" + editor_f +
+                ", editor=" + editor +
                 '}';
     }
 }

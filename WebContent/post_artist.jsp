@@ -14,13 +14,13 @@
 </head>
 <body>
 <s:form action="post_artist" method="post">
-    <s:text name="Artist name:" />
+    <p>Artist name:</p>
     <s:textfield name="name" /><br>
-    <s:text name="Description:" />
+    <p>Artist description:</p>
     <s:textfield name="desc" /><br>
-    <s:text name="Period start [DD/MM/YYYY]:" />
+    <p>Start of active period:</p>
     <s:textfield name="start" /><br>
-    <s:text name="Period end [DD/MM/YYYY]:" />
+    <p>End of active period:</p>
     <s:textfield name="end" /><br>
     <s:submit value="Post artist"/>
 </s:form>

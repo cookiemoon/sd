@@ -27,6 +27,10 @@
 				<s:submit name="multiplex" value="Logout" />
 			</s:form>
 		</c:when>
+		<c:otherwise>
+			<p><b>You don't belong here.</b></p><br>
+			<a href="/login.jsp">Please log in properly.</a>
+		</c:otherwise>
 	</c:choose>
 
 </body>

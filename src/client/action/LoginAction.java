@@ -28,7 +28,7 @@ public class LoginAction extends ActionSupport implements SessionAware {
 				if (rsp.isAccepted()) {
 					session.put("username", username);
 					session.put("loggedin", true); // this marks the user as logged in
-					session.put("editor", rsp.getObj().isEditor_f());
+					session.put("editor", rsp.getObj().isEditor());
 					return SUCCESS;
 				} else {
 					session.put("error", rsp.getErrors());

@@ -14,15 +14,16 @@
 </head>
 <body>
 <s:form action="post_album" method="post">
-    <s:text name="Album title:" />
+    <p>Album title:</p>
     <s:textfield name="title" /><br>
-    <s:text name="Artist ID:" />
+    <p>Artist ID:</p>
     <s:textfield name="artistID" /><br>
-    <s:text name="Description:" />
+    <a href="/help.jsp">Don't know what this means? Click here.</a><br>
+    <p>Album description:</p>
     <s:textfield name="desc" /><br>
-    <s:text name="Release Date [DD/MM/YYYY]:" />
+    <p>Release date:</p>
     <s:textfield name="release_date" /><br>
-    <s:text name="Label:" />
+    <p>Label:</p>
     <s:textfield name="label" /><br>
     <s:submit value="Post music"/>
 </s:form>

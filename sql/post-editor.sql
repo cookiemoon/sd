@@ -3,4 +3,4 @@
 -- Position 2 -> Email of the user
 UPDATE users
 SET editor = ?
-WHERE users_email = ?;
+WHERE email = ?;

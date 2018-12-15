@@ -1,5 +1,6 @@
 package client.action;
 
+import Shared.*;
 import client.model.Bean;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
@@ -14,10 +15,14 @@ public class MakeEditorAction extends ActionSupport implements SessionAware {
 
     @Override
     public String execute() throws RemoteException {
-        if(this.getBean().grantPrivilege(this.grantee).isAccepted())
+        MessageIdentified<String> rsp = this.getBean().grantPrivilege(this.grantee);
+        if(rsp.isAccepted())
             return SUCCESS;
-        else
-            return ERROR;
+        else {
+            session.put("error", rsp.getErrors());
+            session.put("back", "login");
+            return INPUT;
+        }
     }
 
     public void setGrantee(String grantee) {

@@ -400,25 +400,28 @@ public class Worker implements Runnable {
 
             stmnt.executeUpdate();
             ResultSet rs = stmnt.getGeneratedKeys();
-            rs.next();
 
-            for (Artist a : upper) {
-                stmnt = setFields(con, "post-artist-album", a.getID(), rs.getInt("id"));
+            if(rs.isBeforeFirst()){
+                rs.next();
+
+                for (Artist a : upper) {
+                    stmnt = setFields(con, "post-artist-album", a.getID(), rs.getInt("id"));
+                    stmnt.executeUpdate();
+                }
+
+                List<String> genres = data.getGenres();
+
+                for (String g : genres) {
+                    stmnt = setFields(con, "post-album-genre", rs.getInt("id"), g);
+                    stmnt.executeUpdate();
+                }
+
+                stmnt = setFields(con, "post-album-editor", rs.getInt("id"), editor.getEmail());
                 stmnt.executeUpdate();
+                return rs;
+            } else {
+                return null;
             }
-
-            List<String> genres = data.getGenres();
-
-            for (String g : genres) {
-                stmnt = setFields(con, "post-album-genre", rs.getInt("id"), g);
-                stmnt.executeUpdate();
-            }
-
-            stmnt = setFields(con, "post-album-editor", rs.getInt("id"), editor.getEmail());
-            stmnt.executeUpdate();
-
-            rs.beforeFirst();
-            return rs;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -434,18 +437,21 @@ public class Worker implements Runnable {
 
             stmnt.executeUpdate();
             ResultSet rs = stmnt.getGeneratedKeys();
-            rs.next();
+            if(rs.isBeforeFirst()) {
+                rs.next();
 
-            for (int i=0; i<upper.size(); i+=2) {
-                if (upper.get(i+1)!=null)
-                    stmnt = setFields(con, "post-period-end", upper.get(i), upper.get(i+1));
-                else
-                    stmnt = setFields(con, "post-period", upper.get(i));
-                stmnt.executeUpdate();
+                for (int i = 0; i < upper.size(); i += 2) {
+                    if (upper.get(i + 1) != null)
+                        stmnt = setFields(con, "post-period-end", rs.getInt("id"), upper.get(i), upper.get(i + 1));
+                    else
+                        stmnt = setFields(con, "post-period", rs.getInt("id"), upper.get(i));
+                    stmnt.executeUpdate();
+                }
+
+                return rs;
+            } else {
+                return null;
             }
-
-            rs.beforeFirst();
-            return rs;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -486,21 +492,23 @@ public class Worker implements Runnable {
             stmnt.executeUpdate();
             ResultSet rs = stmnt.getGeneratedKeys();
 
-            rs.next();
-            for (Album a : upper) {
-                stmnt = setFields(con, "post-album-music", a.getID(), rs.getInt("id"));
-                stmnt.executeUpdate();
+            if(rs.isBeforeFirst()) {
+                rs.next();
+                for (Album a : upper) {
+                    stmnt = setFields(con, "post-album-music", a.getID(), rs.getInt("id"));
+                    stmnt.executeUpdate();
+                }
+
+                List<String> genres = data.getGenres();
+
+                for (String g : genres) {
+                    stmnt = setFields(con, "post-music-genre", rs.getInt("id"), g);
+                    stmnt.executeUpdate();
+                }
+                return rs;
+            } else {
+                return null;
             }
-
-            List<String> genres = data.getGenres();
-
-            for (String g : genres) {
-                stmnt = setFields(con, "post-music-genre", rs.getInt("id"), g);
-                stmnt.executeUpdate();
-            }
-
-            rs.beforeFirst();
-            return rs;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -528,7 +536,7 @@ public class Worker implements Runnable {
 
     private ResultSet postUser(User data, Connection con) {
         try {
-            PreparedStatement stmnt = setFields(con, "post-user", data.getEmail(), inputUtil.hashedPass(data.getPwd()), data.isEditor_f());
+            PreparedStatement stmnt = setFields(con, "post-user", data.getEmail(), inputUtil.hashedPass(data.getPwd()), data.isEditor());
             stmnt.executeUpdate();
             ResultSet rs = stmnt.getGeneratedKeys();
 
@@ -684,9 +692,9 @@ public class Worker implements Runnable {
                 user.setSesh_hash(UUID.randomUUID().toString());
 
                 if (checkAnyUser(con)) {
-                    user.setEditor_f(false);
+                    user.setEditor(false);
                 } else {
-                    user.setEditor_f(true);
+                    user.setEditor(true);
                 }
                 postUser(user, con);
                 con.commit();
@@ -708,14 +716,13 @@ public class Worker implements Runnable {
         Connection con = db.getConn();
         try {
             con.setAutoCommit(false);
-            PreparedStatement stmnt = con.prepareStatement(IS_EDITOR_SQL);
-            stmnt.setString(1, candidate.getEmail());
+            PreparedStatement stmnt = setFields(con, "user-is-editor", candidate.getEmail());
             ResultSet rs = stmnt.executeQuery();
             rs.next();
-            boolean isEditor = rs.getBoolean("editor_f");
+            boolean isEditor = rs.getBoolean("editor");
             if (!isEditor)
                 throw new NotAuthorized("User is not authorized.");
-        } catch (SQLException e) {
+        } catch (SQLException|MalformedQuery e) {
             e.printStackTrace();
         }
     }
@@ -833,7 +840,7 @@ public class Worker implements Runnable {
 
                 ResultSet rs = postArtist(period, artist, con);
 
-                if(rs.isBeforeFirst()) {
+                if(rs!=null) {
                     con.commit();
                     con.close();
                     messageClientSuccess(req, null);

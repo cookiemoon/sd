@@ -91,4 +91,8 @@ public class Artist implements Serializable {
     public Artist getOld() {
         return this.old;
     }
+
+    public void setPeriod(List<Calendar> period) {
+        this.period = period;
+    }
 }

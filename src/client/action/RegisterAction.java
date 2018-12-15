@@ -25,18 +25,23 @@ public class RegisterAction extends ActionSupport implements SessionAware {
                 if (rsp.isAccepted()) {
                     session.put("username", username);
                     session.put("loggedin", true);
-                    session.put("editor", rsp.getObj().isEditor_f());
+                    session.put("editor", rsp.getObj().isEditor());
                     return SUCCESS;
                 } else {
-                    this.error = rsp.getErrors();
+                    session.put("error", rsp.getErrors());
+                    session.put("back", "login");
+                    return LOGIN;
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
+            session.put("error", "Server error.");
+            session.put("back", "login");
             return LOGIN;
         }
         else {
-            this.error = "Please do not leave empty fields.";
+            session.put("error", "Please do not leave any empty fields.");
+            session.put("back", "login");
             return LOGIN;
         }
     }

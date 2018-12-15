@@ -9,16 +9,21 @@
     <title>DROPMUSIC : post</title>
 </head>
 <body>
-<p><b>Posting Menu</b></p>
+<h1>Post</h1><hr>
 <c:choose>
-    <p>"What do you want to post?"</p>
-    <c:when test="${session.loggedin == true}">
+    <c:when test="${session.editor == true}">
+        <a href="/main_menu.jsp">Back</a><br>
+        <p>What do you want to post?</p>
         <s:form action="post" method="post">
             <s:submit name="multiplex" value="Music" />
             <s:submit name="multiplex" value="Album" />
             <s:submit name="multiplex" value="Artist" />
         </s:form>
     </c:when>
+    <c:otherwise>
+        <p><b>You don't belong here.</b></p><br>
+        <a href="/main_menu.jsp">Go back to menu.</a>
+    </c:otherwise>
 </c:choose>
 
 </body>

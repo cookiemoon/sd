@@ -14,7 +14,7 @@ public class MainMenuAction extends ActionSupport implements SessionAware {
     public String execute() {
         switch(multiplex) {
             case "Logout":
-                session.put("loggedin", false);
+                session.clear();
         }
         return multiplex;
     }

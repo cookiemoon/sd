@@ -13,17 +13,27 @@
     <title>DROPMUSIC : post music</title>
 </head>
 <body>
-<s:form action="post_music" method="post">
-    <s:text name="Music title:" />
-    <s:textfield name="title" /><br>
-    <s:text name="Album ID:" />
-    <s:textfield name="albumID" /><br>
-    <s:submit value="Search for album"/>
-    <s:text name="Duration in seconds:" />
-    <s:textfield name="duration" /><br>
-    <s:text name="Lyrics:" />
-    <s:textfield name="lyrics" /><br>
-    <s:submit value="Post music"/>
-</s:form>
+<h1>Post Music</h1><hr>
+<c:choose>
+    <c:when test="${session.editor == true}">
+        <a href="/post.jsp">Back</a>
+        <s:form action="post_music" method="post">
+            <p>Music title:</p>
+            <s:textfield name="title" /><br>
+            <p>Album ID:</p>
+            <s:textfield name="albumID" /><br>
+            <a href="/help.jsp">Don't know what this means? Click here.</a><br>
+            <p>Duration in seconds:</p>
+            <s:textfield name="duration" /><br>
+            <p>Lyrics:</p>
+            <s:textfield name="lyrics" /><br>
+            <s:submit value="Post music"/>
+        </s:form>
+    </c:when>
+    <c:otherwise>
+        <p><b>You don't belong here.</b></p><br>
+        <a href="/main_menu.jsp">Go back to menu.</a>
+    </c:otherwise>
+</c:choose>
 </body>
 </html>

@@ -19,6 +19,25 @@ public class inputUtil implements Serializable {
     static String[] MONTHS = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
 
 
+    static public boolean notEmptyOrNull(String... strings) {
+        for(String s : strings) {
+            if(s==null || s.equals(""))
+                return false;
+        }
+        return true;
+    }
+
+    static public Calendar toCalendar(String date) {
+        try {
+            String[] parts = date.split("/");
+            Calendar c = new GregorianCalendar();
+            c.set(Integer.parseInt(parts[2]),Integer.parseInt(parts[1]),Integer.parseInt(parts[0]));
+            return c;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     static public Calendar toCalendar(Date date) {
         Calendar cal = new GregorianCalendar();
         cal.setTime(date);

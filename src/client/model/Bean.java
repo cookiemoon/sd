@@ -20,10 +20,6 @@ import com.google.gson.reflect.TypeToken;
 public class Bean {
 	private ServerInterface server;
 	private User user = new User(null, null);
-	private Music music = new Music(-1, null);
-	private Album album = new Album(-1, null);
-	private Artist artist = new Artist(-1, null, null);
-	private Review review = new Review(-1, null, null, null);
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	public Bean() {
@@ -49,7 +45,13 @@ public class Bean {
 
 	public MessageIdentified<String> grantPrivilege(String grantee) throws RemoteException {
 		String json = server.makeEditor(this.user, grantee);
-		MessageIdentified<String> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<User>>() {}.getType());
+		MessageIdentified<String> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<String>>() {}.getType());
+		return rsp;
+	}
+
+	public MessageIdentified<Artist> postArtist(Artist obj) throws RemoteException {
+		String json = server.postArtist(this.user, obj);
+		MessageIdentified<Artist> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<Shared.Artist>>() {}.getType());
 		return rsp;
 	}
 	

@@ -1,3 +1,3 @@
 UPDATE artist
-SET name = ?, adesc = ?
+SET aname = ?, adesc = ?
 WHERE id = ?;

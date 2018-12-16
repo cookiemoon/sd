@@ -54,7 +54,6 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
       <action name="main_menu" class="client.action.MainMenuAction" method="execute">
           <result name="Post">/post.jsp</result>
           <result name="Edit">/edit.jsp</result>
-          <result name="Details">/details.jsp</result>
           <result name="Search">/search.jsp</result>
           <result name="Grant Editor Privilege">/make_editor.jsp</result>
           <result name="Dropbox">/dropbox.jsp</result>

@@ -24,7 +24,6 @@
 						<s:submit name="multiplex" value="Grant Editor Privilege" /><br>
 					</c:when>
 				</c:choose>
-				<s:submit name="multiplex" value="Details" /><br>
 				<s:submit name="multiplex" value="Search" /><br>
 				<s:submit name="multiplex" value="Dropbox" /><br>
 				<s:submit name="multiplex" value="Logout" />

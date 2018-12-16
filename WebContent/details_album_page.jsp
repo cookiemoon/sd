@@ -19,7 +19,9 @@
 <p>Album by <a href="/details_artist_page.jsp?id=${bean.getAlbumArtistID()}"><c:out value="${bean.getAlbumArtist()}" /></a></p>
 <p>ID: <c:out value="${bean.getAlbumID()}" /></p><hr>
 <p><b>Released </b><c:out value="${bean.getAlbumReleaseDate()}" /></p>
+<p><b>Sponsored by </b><c:out value="${bean.getAlbumLabel()}" /></p>
 <p><b>Description</b><br><c:out value="${bean.getAlbumDescription()}" /></p><hr>
+<p><a href="/review.jsp?id=${bean.getAlbumID()}">Review this album</a></p>
 <p><b>Music List</b></p>
 <c:set value="0" var="count" />
 <c:forEach items="${bean.getAlbumMusic()}" var="item" varStatus="status">

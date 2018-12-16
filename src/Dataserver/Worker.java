@@ -385,7 +385,7 @@ public class Worker implements Runnable {
             ResultSet rs = stmnt.executeQuery();
 
             if(rs.next()) {
-                Review review = new Review(rs.getInt("score"), rs.getString("review"), getUser(new User(rs.getString("users_email"), ""), con), new Album(rs.getInt("id")));
+                Review review = new Review(rs.getInt("score"), rs.getString("review"), getUser(new User(rs.getString("users_email"), ""), con), new Album(rs.getInt("album_id")));
                 return review;
             }
 
@@ -610,7 +610,7 @@ public class Worker implements Runnable {
             ResultSet rs = stmnt.getGeneratedKeys();
 
             if (!inputUtil.oldOrNew(old.getDescription(), data.getDescription()).equals(old.getDescription())) {
-                if(!setFields(con, "get-this-album-editor", old.getID(), editor.getEmail()).executeQuery().isBeforeFirst()) {
+                if(!setFields(con, "get-this-album-editor", old.getID(), editor.getEmail()).executeQuery().next()) {
                     stmnt = setFields(con, "post-album-editor", old.getID(), editor.getEmail());
                     stmnt.executeUpdate();
                 }
@@ -634,7 +634,7 @@ public class Worker implements Runnable {
                     old.getID());
 
             if (!inputUtil.oldOrNew(old.getDescription(), data.getDescription()).equals(old.getDescription())) {
-                if(!setFields(con, "get-this-artist-editor", old.getID(), editor.getEmail()).executeQuery().isBeforeFirst()) {
+                if(!setFields(con, "get-this-artist-editor", old.getID(), editor.getEmail()).executeQuery().next()) {
                     stmnt = setFields(con, "post-artist-editor", old.getID(), editor.getEmail());
                     stmnt.executeUpdate();
                 }

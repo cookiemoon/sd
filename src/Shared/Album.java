@@ -18,6 +18,15 @@ public class Album implements Serializable {
     private String artist;
     private String details;
     private Album old;
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public List<String> getEditors() {
+        return editors;
+    }
+
     private List<String> genres = new ArrayList<>();
     private List<Review> reviews = new ArrayList<>();
     private List<String> editors = new ArrayList<>();

@@ -9,6 +9,8 @@
 <html>
 <head>
     <title>DROPMUSIC : help</title>
+    <script type="application/javascript" src="js/notifications.js"></script>
+    <script>var username = ('${session.username}')</script>
 </head>
 <body>
 <h1>DROPMUSIC Frequently Asked Questions</h1>

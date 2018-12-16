@@ -126,4 +126,16 @@ public class Artist implements Serializable {
     public void setOld(Artist artist) {
         this.old = artist;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public List<String> getAlbums() {
+        return albums;
+    }
+
+    public List<String> getEditors() {
+        return editors;
+    }
 }

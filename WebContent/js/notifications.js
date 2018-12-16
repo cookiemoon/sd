@@ -1,4 +1,5 @@
 var websocket = null;
+var notifN = 0;
 
 window.onload = function() { // URI = ws://localhost:8080/Hey/ws
     connect('ws://' + window.location.host + '/Hey/ws');
@@ -16,7 +17,7 @@ function connect(host) { // connect to the host websocket
 
     websocket.onopen    = onOpen; // set the 4 event listeners below
     websocket.onclose   = onClose;
-    websocket.onmessage = onMessage;
+    websocket.onmessage = createNotification;
     websocket.onerror   = onError;
 }
 
@@ -29,10 +30,6 @@ function onClose(event) {
     writeToHistory('WebSocket closed (code ' + event.code + ').');
 }
 
-function onMessage(message) { // print the received message
-    console.log(message);
-}
-
 function onError(event) {
     writeToHistory('WebSocket error.');
 }
@@ -43,4 +40,16 @@ function doSend(message) {
 
 function writeToHistory(text) {
     console.log(text);
+}
+
+function createNotification(text) {
+    var notifContainer = document.createElement("div");
+    notifContainer.id = "notification" + notifN++;
+    notifContainer.innerHTML = text.data;
+    document.body.appendChild(notifContainer);
+    var id = notifContainer.id;
+    setTimeout(function () {
+        var notification = document.getElementById(id);
+        document.removeChild(notification);
+    }, 2000);
 }

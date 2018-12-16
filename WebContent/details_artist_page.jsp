@@ -13,6 +13,8 @@
 <html>
 <head>
     <title>DROPMUSIC : artist</title>
+    <script type="application/javascript" src="js/notifications.js"></script>
+    <script>var username = ('${session.username}')</script>
 </head>
 <body>
 <h1><c:out value="${bean.getArtistName()}" /></h1>

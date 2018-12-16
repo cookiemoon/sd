@@ -8,6 +8,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>DROPMUSIC : main menu</title>
 	<script type="application/javascript" src="js/notifications.js"></script>
+	<script>var username = ('${session.username}')</script>
 </head>
 <body>
 <a href="/details_music_page.jsp?id=2">TEST!!!</a>
@@ -15,7 +16,6 @@
 	<c:choose>
 		<c:when test="${session.loggedin == true}">
 			<p>Welcome to dropmusic, ${session.username}. Please choose an action.</p>
-			<script>var username = ('${session.username}')</script>
 			<s:form action="main_menu" method="post">
 				<c:choose>
 					<c:when test="${session.editor == true}">

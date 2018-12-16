@@ -11,6 +11,8 @@
 <html>
 <head>
     <title>DROPMUSIC : edit album</title>
+    <script type="application/javascript" src="js/notifications.js"></script>
+    <script>var username = ('${session.username}')</script>
 </head>
 <body>
 <h1>Edit Album</h1><hr>

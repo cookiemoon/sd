@@ -270,4 +270,13 @@ public class Bean {
 		this.user.setPwd(password);
 	}
 
+	//MISC
+
+    public Message<Review> postReview(Review obj) throws RemoteException {
+        obj.setReviewer(this.user);
+        obj.setReviewed(this.album);
+        String json = server.postReview(obj);
+        Message<Review> rsp = gson.fromJson(json, new TypeToken<Message<Review>>() {}.getType());
+        return rsp;
+    }
 }

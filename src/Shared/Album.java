@@ -51,6 +51,15 @@ public class Album implements Serializable {
         this.musicIDs.add(m.getID());
     }
 
+    public float avgScore() {
+        float total=0, count=0;
+        for (Review r: this.reviews) {
+            total += r.getScore();
+            count++;
+        }
+        return total/count;
+    }
+
     public void addReview(Review m) { this.reviews.add(m); }
 
     public void addGenre(String genre) { this.genres.add(genre); }

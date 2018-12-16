@@ -23,7 +23,7 @@
 <p><b>Released </b><c:out value="${bean.getAlbumReleaseDate()}" /></p>
 <p><b>Sponsored by </b><c:out value="${bean.getAlbumLabel()}" /></p>
 <p><b>Description</b><br><c:out value="${bean.getAlbumDescription()}" /></p><hr>
-<p><a href="/review.jsp?id=${bean.getAlbumID()}">Review this album</a></p>
+<p><a href="/review.jsp?id=${bean.getAlbumID()}">Review this album</a></p><hr>
 <p><b>Music List</b></p>
 <c:set value="0" var="count" />
 <c:forEach items="${bean.getAlbumMusic()}" var="item" varStatus="status">

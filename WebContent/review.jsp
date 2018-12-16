@@ -21,8 +21,8 @@
 <h1>Review Album</h1><hr>
 <p>Reviewing <b><c:out value="${bean.getAlbumTitle()}"/></b>.</p>
 <s:form action="review" method="post">
-    <p>Score (0-10): <s:textfield value="score" /></p>
-    <p>Review: <s:textfield value="review" /></p>
+    <p>Score (0-10): <s:textfield name="score" /></p>
+    <p>Review: <s:textfield name="review" /></p>
     <s:submit value="Post review"/>
 </s:form>
 </body>

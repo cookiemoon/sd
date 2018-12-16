@@ -107,6 +107,11 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
           <result name="input">/error_page.jsp</result>
       </action>
 
+      <action name="review" class="client.action.ReviewAction" method="execute">
+          <result name="success">/main_menu.jsp</result>
+          <result name="input">/error_page.jsp</result>
+      </action>
+
   </package>
 
 </struts>

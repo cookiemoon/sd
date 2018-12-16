@@ -24,7 +24,7 @@ public interface ServerInterface extends Remote {
 
     // Search
     String  searchAlbum(List<String> searchTerms) throws RemoteException;
-    String  searchMusic(List<String> promptListStr) throws RemoteException;
+    String  searchMusic(List<String> searchTerms) throws RemoteException;
     String  searchArtist(List<String> searchTerms) throws RemoteException;
 
     // Edit

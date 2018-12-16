@@ -112,6 +112,21 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
           <result name="input">/error_page.jsp</result>
       </action>
 
+      <action name="search_artist" class="client.action.SearchMusicAction" method="execute">
+          <result name="success">/search_artist.jsp</result>
+          <result name="input">/error_page.jsp</result>
+      </action>
+
+      <action name="search_album" class="client.action.SearchMusicAction" method="execute">
+          <result name="success">/search_album.jsp</result>
+          <result name="input">/error_page.jsp</result>
+      </action>
+
+      <action name="search_music" class="client.action.SearchMusicAction" method="execute">
+          <result name="success">/search_music.jsp</result>
+          <result name="input">/error_page.jsp</result>
+      </action>
+
   </package>
 
 </struts>

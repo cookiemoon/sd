@@ -1,35 +1,32 @@
 package client.action;
 
 import Shared.*;
-import Shared.inputUtil;
 import client.model.Bean;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
-import ws.WebSocketAnnotation;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public class ReviewAction extends ActionSupport implements SessionAware {
+public class SearchMusicAction extends ActionSupport implements SessionAware {
     private static final long serialVersionUID = 4L;
     private Map<String, Object> session;
-    private String score;
-    private String review;
-    private Review obj = new Review(-1, "", null, null);
-
+    private String term;
+    private String type_music;
 
     @Override
     public String execute() {
-        if(inputUtil.notEmptyOrNull(score, review)) {
-            obj.setScore(Integer.parseInt(score));
-            obj.setReviewText(review);
+        if(inputUtil.notEmptyOrNull(term, type_music)) {
+            List<String> terms = new ArrayList<>();
+            terms.add(term);
+            terms.add(type_music);
             try {
-                Message<Review> rsp = this.getBean().postReview(obj);
+                Message<List<Music>> rsp = this.getBean().searchMusic(terms);
                 System.out.println(rsp);
                 if (rsp.isAccepted()) {
-                    WebSocketAnnotation.onlineUsers.forEach( (k, v) -> {
-                        v.sendMessage("Album " + rsp.getObj().getReviewed().getTitle() + "has a new score!" );
-                    });
+                    this.getBean().setSearchResultsMusic(rsp.getObj());
                     return SUCCESS;
                 } else {
                     session.put("error", rsp.getErrors());
@@ -49,12 +46,12 @@ public class ReviewAction extends ActionSupport implements SessionAware {
         }
     }
 
-    public void setScore(String score) {
-        this.score = score;
+    public void setTerm(String term) {
+        this.term = term;
     }
 
-    public void setReview(String review) {
-        this.review = review;
+    public void setType_music(String type_music) {
+        this.type_music = type_music;
     }
 
     public Bean getBean() {

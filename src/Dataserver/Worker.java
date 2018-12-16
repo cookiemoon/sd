@@ -692,6 +692,19 @@ public class Worker implements Runnable {
 
     //Search functions
 
+    private ResultSet search(String obj, String term, String type, Connection con) {
+        try {
+            String sql = "search-"+obj+"-"+type;
+            term = "%"+term+"%";
+            PreparedStatement stmnt = setFields(con, sql, term);
+
+            return stmnt.executeQuery();
+        } catch (SQLException|MalformedQuery e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     //Misc
 
     private ResultSet makeEditor(User grantee, Connection con) {
@@ -766,7 +779,6 @@ public class Worker implements Runnable {
                 }
                 postUser(user, con);
                 con.commit();
-
                 messageClientSuccess(req, user);
             } else {
                 messageClientError(req, "Email is already in use.");
@@ -1271,32 +1283,103 @@ public class Worker implements Runnable {
     private void searchMusic(String json) {
         Message<List<String>> req = gson.fromJson(json, new TypeToken<Message<List<String>>>() {}.getType());
         List<String> terms = req.getObj();
+
         Message<List<Music>> resp = new Message<>(req.getType(), "response", null);
         resp.embedMsgid(req.getMsgid());
+
         List<Music> obj = new ArrayList<>();
         Music music = new Music(-1);
 
-        final String SEARCHMUSIC_SQL = sqlCommands.get("get-music");
         Connection con = db.getConn();
         
         try {
 
             con.setAutoCommit(false);
 
-            PreparedStatement stmnt = con.prepareStatement(SEARCHMUSIC_SQL);
-            stmnt.setString(1, terms.get(0));
-            stmnt.setString(2, terms.get(1));
-            stmnt.setString(3, terms.get(2));
-            ResultSet rs = stmnt.executeQuery();
+            ResultSet rs = search("music", terms.get(0), terms.get(1), con);
 
             if(!rs.isBeforeFirst()) {
-                terms.set(0, "No matching results were found");
+                messageClientError(resp, "No search results to show.");
             } else {
                 while(rs.next()) {
-                    //music = new Music(rs.getInt("id"), rs.getInt("duration"), rs.getString("title"), rs.getString("lyrics"), null, null, null);
+                    music = getMusic(new Music(rs.getInt("id")), con);
                 }
 
                 obj.add(music);
+            }
+
+            con.close();
+
+            messageClientSuccess(resp, obj);
+
+        } catch (SQLException e) {
+            internalServerError(con, req);
+        }
+    }
+
+    private void searchAlbum(String json) {
+        Message<List<String>> req = gson.fromJson(json, new TypeToken<Message<List<String>>>() {}.getType());
+        List<String> terms = req.getObj();
+
+        Message<List<Album>> resp = new Message<>(req.getType(), "response", null);
+        resp.embedMsgid(req.getMsgid());
+
+        List<Album> obj = new ArrayList<>();
+        Album album = new Album(-1);
+
+        Connection con = db.getConn();
+
+        try {
+
+            con.setAutoCommit(false);
+
+            ResultSet rs = search("album", terms.get(0), terms.get(1), con);
+
+            if(!rs.isBeforeFirst()) {
+                messageClientError(resp, "No search results to show.");
+            } else {
+                while(rs.next()) {
+                    album = getAlbum(new Album(rs.getInt("id")), con);
+                }
+
+                obj.add(album);
+            }
+
+            con.close();
+
+            messageClientSuccess(resp, obj);
+
+        } catch (SQLException e) {
+            internalServerError(con, req);
+        }
+    }
+
+    private void searchArtist(String json) {
+        Message<List<String>> req = gson.fromJson(json, new TypeToken<Message<List<String>>>() {}.getType());
+        List<String> terms = req.getObj();
+
+        Message<List<Artist>> resp = new Message<>(req.getType(), "response", null);
+        resp.embedMsgid(req.getMsgid());
+
+        List<Artist> obj = new ArrayList<>();
+        Artist artist = new Artist(-1);
+
+        Connection con = db.getConn();
+
+        try {
+
+            con.setAutoCommit(false);
+
+            ResultSet rs = search("artist", terms.get(0), terms.get(1), con);
+
+            if(!rs.isBeforeFirst()) {
+                messageClientError(resp, "No search results to show.");
+            } else {
+                while(rs.next()) {
+                    artist = getArtist(new Artist(rs.getInt("id")), con);
+                }
+
+                obj.add(artist);
             }
 
             con.close();

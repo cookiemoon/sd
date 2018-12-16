@@ -10,6 +10,7 @@
 <jsp:useBean id="bean" class="client.model.Bean" scope="session" />
 
 <% bean.setArtist(request.getParameter("id")); %>
+
 <html>
 <head>
     <title>DROPMUSIC : artist</title>

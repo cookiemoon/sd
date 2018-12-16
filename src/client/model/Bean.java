@@ -27,8 +27,12 @@ public class Bean {
 	private Album album;
 	private Artist artist;
 
-	private List<String> searchResultNames;
-	private List<Integer> searchResultIDs;
+	private List<Music> searchResultsMusic;
+	private List<Album> searchResultsAlbum;
+	private List<Artist> searchResultsArtist;
+
+	private List<String> searchResultNames = new ArrayList<>();
+	private List<Integer> searchResultIDs = new ArrayList<>();
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -62,6 +66,12 @@ public class Bean {
     public Message<Music> getMusic(Music obj) throws RemoteException {
         String json = server.detailsMusic(obj);
         Message<Music> rsp = gson.fromJson(json, new TypeToken<Message<Shared.Music>>() {}.getType());
+        return rsp;
+    }
+
+    public Message<List<Music>> searchMusic(List<String> obj) throws RemoteException {
+        String json = server.searchMusic(obj);
+        Message<List<Music>> rsp = gson.fromJson(json, new TypeToken<Message<List<Shared.Music>>>() {}.getType());
         return rsp;
     }
 
@@ -134,6 +144,12 @@ public class Bean {
     public Message<Album> getAlbum(Album obj) throws RemoteException {
         String json = server.detailsAlbum(obj);
         Message<Album> rsp = gson.fromJson(json, new TypeToken<Message<Shared.Album>>() {}.getType());
+        return rsp;
+    }
+
+    public Message<List<Album>> searchAlbum(List<String> obj) throws RemoteException {
+        String json = server.searchAlbum(obj);
+        Message<List<Album>> rsp = gson.fromJson(json, new TypeToken<Message<List<Shared.Album>>>() {}.getType());
         return rsp;
     }
 
@@ -223,6 +239,12 @@ public class Bean {
         return rsp;
     }
 
+    public Message<List<Artist>> searchArtist(List<String> obj) throws RemoteException {
+        String json = server.searchArtist(obj);
+        Message<List<Artist>> rsp = gson.fromJson(json, new TypeToken<Message<List<Shared.Artist>>>() {}.getType());
+        return rsp;
+    }
+
     public String getArtistName() {
         if(this.artist != null)
             return this.artist.getName();
@@ -297,15 +319,23 @@ public class Bean {
         return searchResultNames;
     }
 
-    public void setSearchResultNames(List<String> searchResultNames) {
-        this.searchResultNames = searchResultNames;
+    public String getSearchResultID(int index) {
+        return String.valueOf(searchResultIDs.get(index));
     }
 
-    public List<Integer> getSearchResultIDs() {
-        return searchResultIDs;
+    public String getResultArtist(int index) {
+        return this.searchResultsMusic.get(index).getArtist();
     }
 
-    public void setSearchResultIDs(List<Integer> searchResultIDs) {
-        this.searchResultIDs = searchResultIDs;
+    public String getMusicResultAlbum(int index) {
+        return this.searchResultsMusic.get(index).getAlbum();
+    }
+
+    public void setSearchResultsMusic (List<Music> list) {
+        this.searchResultsMusic = list;
+        for(Music m : list) {
+            this.searchResultNames.add(m.getTitle());
+            this.searchResultIDs.add(m.getID());
+        }
     }
 }

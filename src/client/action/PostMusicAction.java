@@ -19,7 +19,7 @@ public class PostMusicAction extends ActionSupport implements SessionAware {
     private String duration;
     private String lyrics;
     private String albumID;
-    private Music obj = new Music(-1, "");
+    private Music obj = new Music(-1);
 
 
     @Override
@@ -28,7 +28,7 @@ public class PostMusicAction extends ActionSupport implements SessionAware {
             obj.setTitle(title);
             obj.setLyrics(lyrics);
             obj.setDuration(Integer.parseInt(duration));
-            obj.setAlbum_id(Integer.parseInt(albumID));
+            obj.setAlbumID(Integer.parseInt(albumID));
             try {
                 MessageIdentified<Music> rsp = this.getBean().postMusic(obj);
                 System.out.println(rsp);

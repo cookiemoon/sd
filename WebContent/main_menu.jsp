@@ -10,6 +10,7 @@
 	<script type="application/javascript" src="js/notifications.js"></script>
 </head>
 <body>
+<a href="/details_music_page.jsp?id=2">TEST!!!</a>
 <p><b>Main Menu</b></p>
 	<c:choose>
 		<c:when test="${session.loggedin == true}">

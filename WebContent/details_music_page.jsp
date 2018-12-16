@@ -8,13 +8,17 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="bean" class="client.model.Bean" scope="session" />
+
+<% bean.setMusic(request.getParameter("id")); %>
 <html>
 <head>
     <title>DROPMUSIC : music</title>
 </head>
 <body>
-<c:out value="${bean.getMusicTitle()}" /><br>
-<p>ID: </p><c:out value="${bean.getMusicID()}" /><hr>
-
+<h1><c:out value="${bean.getMusicTitle()}" /></h1>
+<p>by [Artist] in [Album]</p>
+<p>ID: <c:out value="${bean.getMusicID()}" /></p><hr>
+<p><b>Duration</b> <c:out value="${bean.getMusicDuration()}" /> seconds</p>
+<p><b>Lyrics</b><br><c:out value="${bean.getMusicLyrics()}" /></p>
 </body>
 </html>

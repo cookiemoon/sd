@@ -17,7 +17,7 @@ public class EditAlbumAction extends ActionSupport implements SessionAware {
     private String desc = "";
     private String label = "";
     private String release_date = "";
-    private Album obj = new Album(-1, "");
+    private Album obj = new Album(-1);
 
     @Override
     public String execute() {
@@ -30,7 +30,7 @@ public class EditAlbumAction extends ActionSupport implements SessionAware {
                 obj.setReleaseDate(inputUtil.toCalendar(release_date));
             else
                 obj.setReleaseDate(null);
-            obj.setOld(new Album(Integer.parseInt(albumID), ""));
+            obj.setOld(new Album(Integer.parseInt(albumID)));
             try {
                 MessageIdentified<Album> rsp = this.getBean().editAlbum(obj);
                 System.out.println(rsp);

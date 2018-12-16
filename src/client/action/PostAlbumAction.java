@@ -7,9 +7,6 @@ import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
 
 public class PostAlbumAction extends ActionSupport implements SessionAware {
@@ -20,7 +17,7 @@ public class PostAlbumAction extends ActionSupport implements SessionAware {
     private String artistID;
     private String release_date;
     private String label;
-    private Album obj = new Album(-1, "");
+    private Album obj = new Album(-1);
 
     @Override
     public String execute() {
@@ -29,7 +26,7 @@ public class PostAlbumAction extends ActionSupport implements SessionAware {
             obj.setDescription(desc);
             obj.setLabel(label);
             obj.setReleaseDate(inputUtil.toCalendar(release_date));
-            obj.setArtist_id(Integer.parseInt(artistID));
+            obj.setArtistID(Integer.parseInt(artistID));
             try {
                 MessageIdentified<Album> rsp = this.getBean().postAlbum(obj);
                 System.out.println(rsp);

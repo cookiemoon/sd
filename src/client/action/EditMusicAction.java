@@ -15,7 +15,7 @@ public class EditMusicAction extends ActionSupport implements SessionAware {
     private String title = "";
     private String duration = "";
     private String lyrics = "";
-    private Music obj = new Music(-1, "");
+    private Music obj = new Music(-1);
 
     @Override
     public String execute() {
@@ -27,7 +27,7 @@ public class EditMusicAction extends ActionSupport implements SessionAware {
                 obj.setDuration(Integer.parseInt(duration));
             else
                 obj.setDuration(-1);
-            obj.setOld(new Music(Integer.parseInt(musicID), ""));
+            obj.setOld(new Music(Integer.parseInt(musicID)));
             try {
                 MessageIdentified<Music> rsp = this.getBean().editMusic(obj);
                 System.out.println(rsp);

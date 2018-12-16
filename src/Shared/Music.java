@@ -5,25 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Music implements Serializable {
-    int id;
-    int duration;
-    String title;
-    String lyrics;
-    String groupName;
-    String albumName;
-    List<String> genres;
-    String details;
-    List<Integer> album_id = new ArrayList<>();
-    Music old;
-
-    public Music(int duration, String title, String lyrics, String groupName, String albumName, List<String> genres) {
-        this.duration = duration;
-        this.title = title;
-        this.lyrics = lyrics;
-        this.groupName = groupName;
-        this.albumName = albumName;
-        this.genres = genres;
-    }
+    private int id;
+    private int duration;
+    private String title;
+    private String lyrics;
+    private String album;
+    private List<String> genres;
+    private String details;
+    private int albumID;
+    private int artistID;
+    private Music old;
+    private String artist;
 
     public Music(int id, String title, int duration, String lyrics) {
         this.duration = duration;
@@ -32,40 +24,32 @@ public class Music implements Serializable {
         this.id = id;
     }
 
-    static public Music newMusic() {
-        int duration = inputUtil.promptIntBound(9999999, 0, "Duration: ", false);
-        String title = inputUtil.promptStr("Title: ");
-        String lyrics = inputUtil.promptStr("Lyrics: ");
-        String groupName = inputUtil.promptStr("Group Name: ");
-        String albumName = inputUtil.promptStr("Album Name: ");
-        List<String> genres = inputUtil.separateBy(inputUtil.promptStr("Genres (separate with commas \",\"): "), ",");
-        return new Music (duration, title, lyrics, groupName, albumName, genres);
-    }
-
-    public Music(int id, int duration, String title, String lyrics, String groupName, String albumName, List<String> genres) {
+    public Music(int id) {
         this.id = id;
-        this.duration = duration;
-        this.title = title;
-        this.lyrics = lyrics;
-        this.groupName = groupName;
-        this.albumName = albumName;
-        this.genres = genres;
-    }
-
-    public Music(int id, String title) {
-        this.id = id;
-        this.title = title;
+        this.title = null;
         this.duration = -1;
         this.lyrics = null;
+    }
+
+    public int getAlbumID() {
+        return albumID;
+    }
+
+    public void setAlbumID(int albumID) {
+        this.albumID = albumID;
+    }
+
+    public int getArtistID() {
+        return artistID;
+    }
+
+    public void setArtistID(int artistID) {
+        this.artistID = artistID;
     }
 
     public int getID() {
         return id;
     }
-
-    public void addAlbum_ID(int album_id) { this.album_id.add(album_id); }
-
-    public List<Integer> getAlbum_ID() { return this.album_id; }
 
     public void setID(int id) {
         this.id = id;
@@ -95,37 +79,28 @@ public class Music implements Serializable {
         this.lyrics = lyrics;
     }
 
-    public String getGroupName() {
-        return groupName;
+    public String getArtist() {
+        return artist;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setArtist(String artist) {
+        this.artist = artist;
     }
 
-    public String getAlbumName() {
-        return albumName;
+    public String getAlbum() {
+        return album;
     }
 
-    public void setAlbumName(String albumName) {
-        this.albumName = albumName;
+    public void setAlbum(String albumName) {
+        this.album = albumName;
     }
 
     public List<String> getGenres() {
         return genres;
     }
 
-    public void setGenres(List<String> genres) {
-        this.genres = genres;
-    }
-
-    public void edit() {
-        this.old = this;
-        String enter = ") <ENTER> to skip\n>> ";
-        setTitle(inputUtil.oldStrOrNew("Title (Old: "+getTitle()+ enter, getTitle()));
-        setLyrics(inputUtil.oldStrOrNew("Lyrics <ENTER> to skip: \n>> ", getLyrics()));
-        setGroupName(inputUtil.oldStrOrNew("Group Name (" + getGroupName() + enter, getGroupName()));
-        setAlbumName(inputUtil.oldStrOrNew("Album Name (" + getAlbumName() + enter, getAlbumName()));
+    public void addGenre(String genre) {
+        this.genres.add(genre);
     }
     
     public void setDetails(String details) {
@@ -137,10 +112,6 @@ public class Music implements Serializable {
     }
 
     public Music getOld() { return this.old; }
-
-    public void setAlbum_id(int album_id) {
-        this.album_id.add(album_id);
-    }
 
     public void setOld(Music music) {
         this.old = music;

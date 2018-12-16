@@ -240,13 +240,13 @@ public class Worker implements Runnable {
             ResultSet rs = stmnt.executeQuery();
 
             if(rs.next()) {
-                Album album = new Album(rs.getInt("id"), rs.getString("title"), rs.getString("adesc"), inputUtil.toCalendar(rs.getDate("release_date")));
+                Album album = new Album(rs.getInt("id"), rs.getString("title"), rs.getString("adesc"), inputUtil.toCalendar(rs.getDate("release_date")), rs.getString("label"));
 
                 stmnt = setFields(con, "get-album-music", data.getID());
                 rs = stmnt.executeQuery();
 
                 while(rs.next()) {
-                    Music m = getMusic(new Music(rs.getInt("music_id"), ""), con);
+                    Music m = getMusic(new Music(rs.getInt("music_id")), con);
                     album.addMusic(m);
                 }
 
@@ -254,7 +254,7 @@ public class Worker implements Runnable {
                 rs = stmnt.executeQuery();
 
                 while(rs.next()) {
-                    Review r = getReview(new Review(0, "", new User(rs.getString("users_email"), ""), new Album(rs.getInt("album_id"), "")), con);
+                    Review r = getReview(new Review(0, "", new User(rs.getString("users_email"), ""), new Album(rs.getInt("album_id"))), con);
                     album.addReview(r);
                 }
 
@@ -263,6 +263,14 @@ public class Worker implements Runnable {
 
                 while(rs.next()) {
                     album.addEditor(rs.getString("users_email"));
+                }
+
+                stmnt = setFields(con, "get-album-artist", data.getID());
+                rs = stmnt.executeQuery();
+
+                if(rs.next()) {
+                    album.setArtist(rs.getString("name"));
+                    album.setArtistID(rs.getInt("id"));
                 }
 
                 return album;
@@ -290,7 +298,7 @@ public class Worker implements Runnable {
                 rs = stmnt.executeQuery();
 
                 while(rs.next()) {
-                    Album a = getAlbum(new Album(rs.getInt("album_id"), ""), con);
+                    Album a = getAlbum(new Album(rs.getInt("album_id")), con);
                     artist.addAlbum(a);
                 }
 
@@ -320,7 +328,7 @@ public class Worker implements Runnable {
             ResultSet rs = stmnt.executeQuery();
 
             if(rs.next()) {
-                MusicFile file = new MusicFile(getUser(new User(rs.getString("users_email"), ""), con), getMusic(new Music(rs.getInt("music_id"), ""), con));
+                MusicFile file = new MusicFile(getUser(new User(rs.getString("users_email"), ""), con), getMusic(new Music(rs.getInt("music_id")), con));
                 return file;
             }
 
@@ -341,6 +349,23 @@ public class Worker implements Runnable {
 
             if(rs.next()) {
                 Music music = new Music(rs.getInt("id"), rs.getString("title"), rs.getInt("duration"), rs.getString("lyrics"));
+
+                stmnt = setFields(con, "get-music-album", data.getID());
+                rs = stmnt.executeQuery();
+
+                if(rs.next()) {
+                    music.setAlbum(rs.getString("title"));
+                    music.setAlbumID(rs.getInt("id"));
+                }
+
+                stmnt = setFields(con, "get-music-artist", data.getID());
+                rs = stmnt.executeQuery();
+
+                if(rs.next()) {
+                    music.setArtist(rs.getString("name"));
+                    music.setArtistID(rs.getInt("id"));
+                }
+
                 return music;
             }
 
@@ -360,7 +385,7 @@ public class Worker implements Runnable {
             ResultSet rs = stmnt.executeQuery();
 
             if(rs.next()) {
-                Review review = new Review(rs.getInt("score"), rs.getString("review"), getUser(new User(rs.getString("users_email"), ""), con), getAlbum(new Album(rs.getInt("id"), ""), con));
+                Review review = new Review(rs.getInt("score"), rs.getString("review"), getUser(new User(rs.getString("users_email"), ""), con), getAlbum(new Album(rs.getInt("id")), con));
                 return review;
             }
 
@@ -783,11 +808,9 @@ public class Worker implements Runnable {
 
             con.setAutoCommit(false);
 
-            for (int id : music.getAlbum_ID()) {
-                Album real = getAlbum(new Album(id, ""), con);
-                if(real != null)
-                    upper.add(real);
-            }
+            Album real = getAlbum(new Album(music.getAlbumID()), con);
+            if(real != null)
+                upper.add(real);
 
             if (upper.size() == 0) {
                 messageClientError(req, "Album does not exist");
@@ -830,11 +853,9 @@ public class Worker implements Runnable {
             con.setAutoCommit(false);
             userIsEditor(user);
 
-            for (int id : album.getArtist_ID()) {
-                Artist real = getArtist(new Artist(id, "", ""), con);
-                if(real != null)
-                    upper.add(real);
-            }
+            Artist real = getArtist(new Artist(album.getArtistID(), "", ""), con);
+            if(real != null)
+                upper.add(real);
 
 
             if (upper.size() == 0) {
@@ -1251,7 +1272,7 @@ public class Worker implements Runnable {
         Message<List<Music>> resp = new Message<>(req.getType(), "response", null);
         resp.embedMsgid(req.getMsgid());
         List<Music> obj = new ArrayList<>();
-        Music music = new Music(0, null);
+        Music music = new Music(-1);
 
         final String SEARCHMUSIC_SQL = sqlCommands.get("get-music");
         Connection con = db.getConn();
@@ -1270,7 +1291,7 @@ public class Worker implements Runnable {
                 terms.set(0, "No matching results were found");
             } else {
                 while(rs.next()) {
-                    music = new Music(rs.getInt("id"), rs.getInt("duration"), rs.getString("title"), rs.getString("lyrics"), null, null, null);
+                    //music = new Music(rs.getInt("id"), rs.getInt("duration"), rs.getString("title"), rs.getString("lyrics"), null, null, null);
                 }
 
                 obj.add(music);

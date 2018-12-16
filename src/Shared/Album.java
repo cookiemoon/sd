@@ -7,59 +7,44 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 public class Album implements Serializable {
-    int id;
-    String title;
-    String description;
-    String groupName;
-    String prevKey;
-    String label;
-    Calendar releaseDate;
-    List<Integer> musicIDs;
-    List<String> genres;
-    static final long serialVersionUID = 420L;
-    String details;
-    private List<Integer> artist_id = new ArrayList<>();
+    private int id;
+    private String title;
+    private String description;
+    private String label;
+    private Calendar releaseDate;
+    private List<Integer> musicIDs;
+    private List<String> musicTitles;
+    private int artistID;
+    private String artist;
+    private String details;
     private Album old;
-    private List<Music> songs = new ArrayList<>();
+    private List<String> genres = new ArrayList<>();
     private List<Review> reviews = new ArrayList<>();
     private List<String> editors = new ArrayList<>();
     private boolean edited = false;
+    static final long serialVersionUID = 420L;
 
-    public Album(int id, String title) {
+    public Album(int id) {
         this.id = id;
-        this.title = title;
+        this.title = null;
     }
 
-    public Album(int id, String title, String description, Calendar releaseDate) {
+    public Album(int id, String title, String description, Calendar releaseDate, String label) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.releaseDate = releaseDate;
-    }
-
-    public Album(int id, String title, String description, String groupName, Calendar releaseDate, String label) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.groupName = groupName;
         this.releaseDate = releaseDate;
         this.label = label;
     }
 
-    public static Album newAlbum() {
-        String title = inputUtil.promptStr("Title:");
-        String desc = inputUtil.promptStr("Description: ");
-        String groupName = inputUtil.promptStr("Group name: ");
-        Calendar release = inputUtil.promptDate("Release date", false);
-        String label = inputUtil.promptStr("Label: ");
-        return new Album(-1, title, desc, groupName, release, label);
+    public void addMusic(Music m) {
+        this.musicTitles.add(m.getTitle());
+        this.musicIDs.add(m.getID());
     }
 
-    public void addMusic(Music m) { this.songs.add(m); }
-
-    public List<Music> getMusic () { return this.songs; }
-
     public void addReview(Review m) { this.reviews.add(m); }
+
+    public void addGenre(String genre) { this.genres.add(genre); }
 
     public List<Review> getReview () { return this.reviews; }
 
@@ -103,31 +88,8 @@ public class Album implements Serializable {
         this.releaseDate = releaseDate;
     }
 
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public void setArtist_id(int artist_id) {
-        this.artist_id.add(artist_id);
-    }
-
-    public List<Integer> getMusicIDs() { return this.musicIDs; }
-
-    public void edit() {
-        // FIXME: in depth edit
-        this.old = this;
-        String enter = ") <ENTER> to skip\n>> ";
-        setTitle(inputUtil.oldStrOrNew("Title (Old: "+getTitle()+ enter, getTitle()));
-        setDescription(inputUtil.oldStrOrNew("Description <ENTER> to skip: \n>> ", getDescription()));
-        setGroupName(inputUtil.oldStrOrNew("Group Name (" + getGroupName() + enter, getGroupName()));
-
-        boolean changeReleaseDate = inputUtil.promptYesNo("Change release date (Old: " + inputUtil.formatDate(getReleaseDate()) + ")? (Y/N)\n>> ");
-        if(changeReleaseDate)
-            setReleaseDate(inputUtil.promptDate("New Release Date: ", false));
+    public void setArtistID(int artistID) {
+        this.artistID = artistID;
     }
 
     public void setDetails(String details) {
@@ -138,18 +100,20 @@ public class Album implements Serializable {
         return this.details;
     }
 
-    public void setMusicIDs(List<Integer> musicIDs) {
-        this.musicIDs = musicIDs;
-    }
-
     public List<String> getGenres() {
         return this.genres;
     }
 
-    public void addArtist_ID(int artist_id) { this.artist_id.add(artist_id); }
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
 
-    public List<Integer> getArtist_ID() {
-        return this.artist_id;
+    public int getArtistID() {
+        return this.artistID;
+    }
+
+    public String getArtist() {
+        return this.artist;
     }
 
     public Album getOld() {
@@ -170,5 +134,13 @@ public class Album implements Serializable {
 
     public void setOld(Album album) {
         this.old = album;
+    }
+
+    public List<String> getMusicTitles() {
+        return this.musicTitles;
+    }
+
+    public List<Integer> getMusicIDs() {
+        return this.musicIDs;
     }
 }

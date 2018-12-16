@@ -5,6 +5,7 @@ import Shared.inputUtil;
 import client.model.Bean;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
+import ws.WebSocketAnnotation;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -29,6 +30,9 @@ public class ReviewAction extends ActionSupport implements SessionAware {
                 Message<Review> rsp = this.getBean().postReview(obj);
                 System.out.println(rsp);
                 if (rsp.isAccepted()) {
+                    WebSocketAnnotation.onlineUsers.forEach( (k, v) -> {
+                        v.sendMessage("Album " + rsp.getObj().getReviewed().getTitle() + "has a new score!" );
+                    });
                     return SUCCESS;
                 } else {
                     session.put("error", rsp.getErrors());

@@ -15,24 +15,18 @@ import java.util.Map;
 public class ReviewAction extends ActionSupport implements SessionAware {
     private static final long serialVersionUID = 4L;
     private Map<String, Object> session;
-    private String name;
-    private String desc;
-    private String start;
-    private String end;
-    private Artist obj = new Artist(-1, "", "");
+    private String score;
+    private String review;
+    private Review obj = new Review(-1, "", null, null);
 
 
     @Override
     public String execute() {
-        if(inputUtil.notEmptyOrNull(name, desc, start, end)) {
-            obj.setName(name);
-            obj.setDescription(desc);
-            List<Calendar> period = new ArrayList<>();
-            period.add(inputUtil.toCalendar(start));
-            period.add(inputUtil.toCalendar(end));
-            obj.setPeriod(period);
+        if(inputUtil.notEmptyOrNull(score, review)) {
+            obj.setScore(Integer.parseInt(score));
+            obj.setReviewText(review);
             try {
-                MessageIdentified<Artist> rsp = this.getBean().postArtist(obj);
+                Message<Review> rsp = this.getBean().postReview(obj);
                 System.out.println(rsp);
                 if (rsp.isAccepted()) {
                     return SUCCESS;
@@ -54,20 +48,12 @@ public class ReviewAction extends ActionSupport implements SessionAware {
         }
     }
 
-    public void setEnd(String end) {
-        this.end = end;
+    public void setScore(String score) {
+        this.score = score;
     }
 
-    public void setStart(String start) {
-        this.start = start;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setReview(String review) {
+        this.review = review;
     }
 
     public Bean getBean() {

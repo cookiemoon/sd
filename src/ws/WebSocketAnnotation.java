@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class WebSocketAnnotation implements SessionAware {
     private Map<String, Object> session;
     private Session connection;
-    private static final ConcurrentHashMap<String, WebSocketAnnotation> onlineUsers = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, WebSocketAnnotation> onlineUsers = new ConcurrentHashMap<>();
 
     @OnOpen
     public void onOpen(Session connection) {
@@ -36,7 +36,7 @@ public class WebSocketAnnotation implements SessionAware {
         onlineUsers.put(message, this);
     }
 
-    private void sendMessage(String text) {
+    public void sendMessage(String text) {
         // uses *this* object's session to call sendText()
         try {
             this.connection.getBasicRemote().sendText(text);

@@ -5,6 +5,7 @@ import Shared.inputUtil;
 import client.model.Bean;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
+import ws.WebSocketAnnotation;
 
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -28,6 +29,11 @@ public class EditArtistAction extends ActionSupport implements SessionAware {
                 MessageIdentified<Artist> rsp = this.getBean().editArtist(obj);
                 System.out.println(rsp);
                 if (rsp.isAccepted()) {
+                    for (String user : rsp.getObj().getEditors()) {
+                        if (!user.equals(this.session.get("username")))
+                            WebSocketAnnotation.onlineUsers.get(user).sendMessage(user + " edited artist '" + rsp.getObj().getName() + "'");
+                    }
+
                     return SUCCESS;
                 } else {
                     session.put("error", rsp.getErrors());

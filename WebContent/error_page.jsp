@@ -11,6 +11,8 @@
 <html>
 <head>
     <title>DROPMUSIC : error</title>
+    <script type="application/javascript" src="js/notifications.js"></script>
+    <script>var username = ('${session.username}')</script>
 </head>
 <body>
 <p>An error has occurred.<br> ${session.error}</p>

@@ -6,6 +6,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Goodbye :(</title>
+	<script type="application/javascript" src="js/notifications.js"></script>
+	<script>var username = ('${session.username}')</script>
 </head>
 <body>
 	<h4>You got an exception. Please <i>throw</i> it to someone who can handle it.</h4>

@@ -13,6 +13,8 @@
 <html>
 <head>
     <title>DROPMUSIC : make editor</title>
+    <script type="application/javascript" src="js/notifications.js"></script>
+    <script>var username = ('${session.username}')</script>
 </head>
 <body>
 <h1>Grant editor privilege</h1><hr>

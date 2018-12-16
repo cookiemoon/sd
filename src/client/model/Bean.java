@@ -27,6 +27,9 @@ public class Bean {
 	private Album album;
 	private Artist artist;
 
+	private List<String> searchResultNames;
+	private List<Integer> searchResultIDs;
+
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public Bean() {
@@ -188,6 +191,14 @@ public class Bean {
         return null;
     }
 
+    public boolean ArtistHasNoContent() {
+        if(this.artist!=null) {
+            if(this.artist.getAlbumTitles().size() == 0)
+                return true;
+        }
+        return false;
+    }
+
     //ARTIST RELATED
 
     public void setArtist(String artistID) throws RemoteException {
@@ -270,7 +281,7 @@ public class Bean {
 		this.user.setPwd(password);
 	}
 
-	//MISC
+	//REVIEW
 
     public Message<Review> postReview(Review obj) throws RemoteException {
         obj.setReviewer(this.user);
@@ -278,5 +289,23 @@ public class Bean {
         String json = server.postReview(obj);
         Message<Review> rsp = gson.fromJson(json, new TypeToken<Message<Review>>() {}.getType());
         return rsp;
+    }
+
+    //SEARCH RESULTS
+
+    public List<String> getSearchResultNames() {
+        return searchResultNames;
+    }
+
+    public void setSearchResultNames(List<String> searchResultNames) {
+        this.searchResultNames = searchResultNames;
+    }
+
+    public List<Integer> getSearchResultIDs() {
+        return searchResultIDs;
+    }
+
+    public void setSearchResultIDs(List<Integer> searchResultIDs) {
+        this.searchResultIDs = searchResultIDs;
     }
 }

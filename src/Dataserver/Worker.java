@@ -633,15 +633,15 @@ public class Worker implements Runnable {
                     inputUtil.oldOrNew(old.getDescription(), data.getDescription()),
                     old.getID());
 
+            stmnt.executeUpdate();
+            ResultSet rs = stmnt.getGeneratedKeys();
+
             if (!inputUtil.oldOrNew(old.getDescription(), data.getDescription()).equals(old.getDescription())) {
                 if(!setFields(con, "get-this-artist-editor", old.getID(), editor.getEmail()).executeQuery().next()) {
                     stmnt = setFields(con, "post-artist-editor", old.getID(), editor.getEmail());
                     stmnt.executeUpdate();
                 }
             }
-
-            stmnt.executeUpdate();
-            ResultSet rs = stmnt.getGeneratedKeys();
 
             return rs;
         } catch (SQLException e) {

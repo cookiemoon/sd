@@ -21,8 +21,10 @@
 <p><b>Released </b><c:out value="${bean.getAlbumReleaseDate()}" /></p>
 <p><b>Description</b><br><c:out value="${bean.getAlbumDescription()}" /></p><hr>
 <p><b>Music List</b></p>
-<c:forEach items="${bean.getAlbumMusic}" var="item">
-
+<c:set value="0" var="count" />
+<c:forEach items="${bean.getAlbumMusic()}" var="item" varStatus="status">
+    <c:set value="${count+1}" var="count" />
+    <c:out value="${count}. " /><a href="/details_music_page.jsp?id=${bean.getAlbumMusicID(status.index)}"><c:out value="${item}" /></a>
 </c:forEach>
 </body>
 </html>

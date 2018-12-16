@@ -13,7 +13,8 @@ public class Artist implements Serializable {
     List<Calendar> period;
     String details;
     private Artist old;
-    private List<Album> albums = new ArrayList<>();
+    private List<String> albums = new ArrayList<>();
+    private List<Integer> albumIDs = new ArrayList<>();
     private List<String> editors = new ArrayList<>();
 
     public boolean isEdited() {
@@ -93,9 +94,14 @@ public class Artist implements Serializable {
         setDescription(inputUtil.promptStr("Description: "));
     }
 
-    public void addAlbum(Album m) { this.albums.add(m); }
+    public void addAlbum(Album m) {
+        this.albums.add(m.getTitle());
+        this.albumIDs.add(m.getID());
+    }
 
-    public List<Album> getAlbum () { return this.albums; }
+    public List<String> getAlbumTitles () { return this.albums; }
+
+    public List<Integer> getAlbumIDs () { return this.albumIDs; }
 
     public void setDetails(String details) {
         this.details = details;

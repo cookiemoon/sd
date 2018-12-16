@@ -15,8 +15,14 @@
     <title>DROPMUSIC : artist</title>
 </head>
 <body>
-<h1><c:out value="${bean.getArtistName()}" /></h1><br>
+<h1><c:out value="${bean.getArtistName()}" /></h1>
 <p>ID: <c:out value="${bean.getArtistID()}" /></p><hr>
-<p><b>Description</b><br><c:out value="${bean.getArtistDescription()}" /></p>
+<p><b>Description</b><br><c:out value="${bean.getArtistDescription()}" /></p><hr>
+<p><b>Album List</b></p>
+<c:set value="0" var="count" />
+<c:forEach items="${bean.getArtistAlbum()}" var="item" varStatus="status">
+    <c:set value="${count+1}" var="count" />
+    <c:out value="${count}. " /><a href="/details_album_page.jsp?id=${bean.getArtistAlbumID(status.index)}"><c:out value="${item}" /></a>
+</c:forEach>
 </body>
 </html>

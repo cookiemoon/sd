@@ -176,8 +176,14 @@ public class Bean {
         return null;
     }
 
+    public String getAlbumMusicID(int index) {
+        if(this.album!=null && this.album.getMusicIDs().size() > index)
+            return String.valueOf(this.album.getMusicIDs().get(index));
+        return null;
+    }
+
     public List<String> getAlbumMusic() {
-        if(this.music != null)
+        if(this.album != null)
             return this.album.getMusicTitles();
         return null;
     }
@@ -221,6 +227,18 @@ public class Bean {
     public String getArtistDescription() {
         if(this.artist != null)
             return this.artist.getDescription();
+        return null;
+    }
+
+    public String getArtistAlbumID(int index) {
+        if(this.artist!=null && this.artist.getAlbumIDs().size() > index)
+            return String.valueOf(this.artist.getAlbumIDs().get(index));
+        return null;
+    }
+
+    public List<String> getArtistAlbum() {
+        if(this.artist != null)
+            return this.artist.getAlbumTitles();
         return null;
     }
 

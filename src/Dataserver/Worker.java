@@ -385,7 +385,7 @@ public class Worker implements Runnable {
             ResultSet rs = stmnt.executeQuery();
 
             if(rs.next()) {
-                Review review = new Review(rs.getInt("score"), rs.getString("review"), getUser(new User(rs.getString("users_email"), ""), con), getAlbum(new Album(rs.getInt("id")), con));
+                Review review = new Review(rs.getInt("score"), rs.getString("review"), getUser(new User(rs.getString("users_email"), ""), con), new Album(rs.getInt("id")));
                 return review;
             }
 

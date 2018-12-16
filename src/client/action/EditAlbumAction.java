@@ -48,7 +48,7 @@ public class EditAlbumAction extends ActionSupport implements SessionAware {
             session.put("back", "menu");
             return INPUT;
         } else {
-            session.put("error", "Please do not leave any empty fields");
+            session.put("error", "Please do not ID field empty.");
             session.put("back", "menu");
             return INPUT;
         }

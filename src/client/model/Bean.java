@@ -20,6 +20,34 @@ import com.google.gson.reflect.TypeToken;
 public class Bean {
 	private ServerInterface server;
 	private User user = new User(null, null);
+	private Music music;
+	private Album album;
+	private Artist artist;
+
+	public void setMusic(Music music) {
+		this.music = music;
+	}
+
+	public void setAlbum(Album album) {
+		this.album = album;
+	}
+
+	public void setArtist(Artist artist) {
+		this.artist = artist;
+	}
+
+	public String getMusicTitle() {
+		if(this.music != null)
+			return this.music.getTitle();
+		return null;
+	}
+
+	public String getMusicID() {
+		if(this.music != null)
+			return String.valueOf(this.music.getID());
+		return null;
+	}
+
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	public Bean() {
@@ -84,6 +112,24 @@ public class Bean {
 		MessageIdentified<Album> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<Shared.Album>>() {}.getType());
 		return rsp;
 	}
+
+	public Message<Music> getMusic(Music obj) throws RemoteException {
+		String json = server.detailsMusic(obj);
+		Message<Music> rsp = gson.fromJson(json, new TypeToken<Message<Shared.Music>>() {}.getType());
+		return rsp;
+	}
+
+	public Message<Album> getAlbum(Album obj) throws RemoteException {
+		String json = server.detailsAlbum(obj);
+		Message<Album> rsp = gson.fromJson(json, new TypeToken<Message<Shared.Album>>() {}.getType());
+		return rsp;
+	}
+
+	public Message<Artist> getArtist(Artist obj) throws RemoteException {
+		String json = server.detailsArtist(obj);
+		Message<Artist> rsp = gson.fromJson(json, new TypeToken<Message<Shared.Artist>>() {}.getType());
+		return rsp;
+	}
 	
 	public void setUsername(String username) {
 		this.user.setEmail(username);
@@ -92,6 +138,4 @@ public class Bean {
 	public void setPassword(String password) {
 		this.user.setPwd(password);
 	}
-
-
 }

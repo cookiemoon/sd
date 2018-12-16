@@ -40,6 +40,12 @@ public class Artist implements Serializable {
         this.description = description;
     }
 
+    public Artist(int id) {
+        this.id = id;
+        this.name = null;
+        this.description = null;
+    }
+
     public static Artist newGroup() {
         String name = inputUtil.promptStr("Name: ");
         String desc = inputUtil.promptStr("Description: ");

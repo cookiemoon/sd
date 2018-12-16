@@ -112,8 +112,8 @@ public class Bean {
 
     //ALBUM RELATED
 
-    public void setAlbum(Album album) {
-        this.album = album;
+    public void setAlbum(String albumID) throws RemoteException {
+        this.album = getAlbum(new Album(Integer.parseInt(albumID))).getObj();
     }
 
     public MessageIdentified<Album> postAlbum(Album obj) throws RemoteException {
@@ -132,6 +132,18 @@ public class Bean {
         String json = server.detailsAlbum(obj);
         Message<Album> rsp = gson.fromJson(json, new TypeToken<Message<Shared.Album>>() {}.getType());
         return rsp;
+    }
+
+    public String getAlbumArtist() {
+        if(this.album!=null)
+            return this.album.getArtist();
+        return null;
+    }
+
+    public String getAlbumArtistID() {
+        if(this.album!=null)
+            return String.valueOf(this.album.getArtistID());
+        return null;
     }
 
     public String getAlbumTitle() {
@@ -172,8 +184,8 @@ public class Bean {
 
     //ARTIST RELATED
 
-    public void setArtist(Artist artist) {
-        this.artist = artist;
+    public void setArtist(String artistID) throws RemoteException {
+        this.artist = getArtist(new Artist(Integer.parseInt(artistID))).getObj();
     }
 
     public MessageIdentified<Artist> postArtist(Artist obj) throws RemoteException {
@@ -192,6 +204,24 @@ public class Bean {
         String json = server.detailsArtist(obj);
         Message<Artist> rsp = gson.fromJson(json, new TypeToken<Message<Shared.Artist>>() {}.getType());
         return rsp;
+    }
+
+    public String getArtistName() {
+        if(this.artist != null)
+            return this.artist.getName();
+        return null;
+    }
+
+    public String getArtistID() {
+        if(this.artist != null)
+            return String.valueOf(this.artist.getID());
+        return null;
+    }
+
+    public String getArtistDescription() {
+        if(this.artist != null)
+            return this.artist.getDescription();
+        return null;
     }
 
     //USER RELATED

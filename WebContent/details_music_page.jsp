@@ -16,7 +16,8 @@
 </head>
 <body>
 <h1><c:out value="${bean.getMusicTitle()}" /></h1>
-<p>by [Artist] in [Album]</p>
+<p>Music by <a href="/details_artist_page.jsp?id=${bean.getMusicArtistID()}"><c:out value="${bean.getMusicArtist()}" /></a>
+    in <a href="/details_album_page.jsp?id=${bean.getMusicAlbumID()}"><c:out value="${bean.getMusicAlbum()}" /></a></p>
 <p>ID: <c:out value="${bean.getMusicID()}" /></p><hr>
 <p><b>Duration</b> <c:out value="${bean.getMusicDuration()}" /> seconds</p>
 <p><b>Lyrics</b><br><c:out value="${bean.getMusicLyrics()}" /></p>

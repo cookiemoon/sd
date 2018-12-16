@@ -269,7 +269,7 @@ public class Worker implements Runnable {
                 rs = stmnt.executeQuery();
 
                 if(rs.next()) {
-                    album.setArtist(rs.getString("name"));
+                    album.setArtist(rs.getString("aname"));
                     album.setArtistID(rs.getInt("id"));
                 }
 
@@ -362,7 +362,7 @@ public class Worker implements Runnable {
                 rs = stmnt.executeQuery();
 
                 if(rs.next()) {
-                    music.setArtist(rs.getString("name"));
+                    music.setArtist(rs.getString("aname"));
                     music.setArtistID(rs.getInt("id"));
                 }
 
@@ -472,7 +472,7 @@ public class Worker implements Runnable {
         }
     }
 
-    private ResultSet postArtist(List<Calendar> upper, Artist data, Connection con) {
+    private ResultSet postArtist(User editor, List<Calendar> upper, Artist data, Connection con) {
         try {
             PreparedStatement stmnt = setFields(con, "post-artist", data.getName(), data.getDescription());
 
@@ -489,6 +489,8 @@ public class Worker implements Runnable {
                     stmnt.executeUpdate();
                 }
 
+                stmnt = setFields(con, "post-artist-editor", rs.getInt("id"), editor.getEmail());
+                stmnt.executeUpdate();
                 return rs;
             } else {
                 return null;
@@ -900,7 +902,7 @@ public class Worker implements Runnable {
 
             if(validPeriods(period)) {
 
-                ResultSet rs = postArtist(period, artist, con);
+                ResultSet rs = postArtist(user, period, artist, con);
 
                 if(rs!=null) {
                     con.commit();

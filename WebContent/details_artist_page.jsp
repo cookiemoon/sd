@@ -7,17 +7,16 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<jsp:useBean id="bean" class="client.model.Bean" scope="session" />
+
+<% bean.setArtist(request.getParameter("id")); %>
 <html>
 <head>
     <title>DROPMUSIC : artist</title>
 </head>
 <body>
-<h1><c:out value="${session.artist.name}" /></h1><br>
-<p>ID: <c:out value="${session.artist.id}" /></p><hr>
-<c:forEach items="${session.artist.album}" var="obj">
-    <c:out value="${obj.title}" /><br>
-    <p>ID: <c:out value="${obj.id}" /></p>
-    <hr>
-</c:forEach>
+<h1><c:out value="${bean.getArtistName()}" /></h1><br>
+<p>ID: <c:out value="${bean.getArtistID()}" /></p><hr>
+<p><b>Description</b><br><c:out value="${bean.getArtistDescription()}" /></p>
 </body>
 </html>

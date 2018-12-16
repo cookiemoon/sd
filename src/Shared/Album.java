@@ -12,8 +12,8 @@ public class Album implements Serializable {
     private String description;
     private String label;
     private Calendar releaseDate;
-    private List<Integer> musicIDs;
-    private List<String> musicTitles;
+    private List<Integer> musicIDs = new ArrayList<>();
+    private List<String> musicTitles = new ArrayList<>();
     private int artistID;
     private String artist;
     private String details;

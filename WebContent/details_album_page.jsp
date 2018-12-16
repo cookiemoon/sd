@@ -8,18 +8,20 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="bean" class="client.model.Bean" scope="session" />
+
+<% bean.setAlbum(request.getParameter("id")); %>
 <html>
 <head>
     <title>DROPMUSIC : album</title>
 </head>
 <body>
 <h1><c:out value="${bean.getAlbumTitle()}" /></h1>
-<p>by [Artist]</p>
+<p>Album by <a href="/details_artist_page.jsp?id=${bean.getAlbumArtistID()}"><c:out value="${bean.getAlbumArtist()}" /></a></p>
 <p>ID: <c:out value="${bean.getAlbumID()}" /></p><hr>
 <p><b>Released </b><c:out value="${bean.getAlbumReleaseDate()}" /></p>
 <p><b>Description</b><br><c:out value="${bean.getAlbumDescription()}" /></p><hr>
-<p><b>Music List</b></p><hr>
-<c:forEach items="${bean.getAlbumMusic}" var="title">
+<p><b>Music List</b></p>
+<c:forEach items="${bean.getAlbumMusic}" var="item">
 
 </c:forEach>
 </body>

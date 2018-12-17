@@ -17,10 +17,11 @@ public class DropboxAction extends ActionSupport implements SessionAware {
         System.out.println(code);
         // Check how to get the thing from the url
         // ?code=09129391230
-        session.put("dropbox_token", this.code);
         try {
             MessageIdentified<String> rsp = this.getBean().associateDropbox(this.code);
             if (rsp.isAccepted()) {
+                session.put("dropbox_associated", true);
+                session.put("dropbox_token", this.code);
                 System.out.println("DROPBOX IS YAY");
             } else {
                 System.out.println("Some thing went OH SO VERY WRONG");

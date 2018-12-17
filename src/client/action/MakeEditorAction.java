@@ -4,6 +4,7 @@ import Shared.*;
 import client.model.Bean;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
+import ws.WebSocketAnnotation;
 
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -17,8 +18,10 @@ public class MakeEditorAction extends ActionSupport implements SessionAware {
     public String execute() {
         try {
             MessageIdentified<String> rsp = this.getBean().grantPrivilege(this.grantee);
-            if (rsp.isAccepted())
+            if (rsp.isAccepted()) {
+                WebSocketAnnotation.onlineUsers.get(rsp.getObj()).sendMessage("You are now an editor!");
                 return SUCCESS;
+            }
             else {
                 session.put("error", rsp.getErrors());
                 session.put("back", "menu");

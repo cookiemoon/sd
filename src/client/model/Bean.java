@@ -27,6 +27,13 @@ public class Bean {
 	private Album album;
 	private Artist artist;
 
+	private List<Music> searchResultsMusic;
+	private List<Album> searchResultsAlbum;
+	private List<Artist> searchResultsArtist;
+
+	private List<String> searchResultNames = new ArrayList<>();
+	private List<Integer> searchResultIDs = new ArrayList<>();
+
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public Bean() {
@@ -59,6 +66,12 @@ public class Bean {
     public Message<Music> getMusic(Music obj) throws RemoteException {
         String json = server.detailsMusic(obj);
         Message<Music> rsp = gson.fromJson(json, new TypeToken<Message<Shared.Music>>() {}.getType());
+        return rsp;
+    }
+
+    public Message<List<Music>> searchMusic(List<String> obj) throws RemoteException {
+        String json = server.searchMusic(obj);
+        Message<List<Music>> rsp = gson.fromJson(json, new TypeToken<Message<List<Shared.Music>>>() {}.getType());
         return rsp;
     }
 
@@ -110,6 +123,10 @@ public class Bean {
         return null;
     }
 
+    public List<String> getMusicGenres() {
+        return this.music.getGenres();
+    }
+
     //ALBUM RELATED
 
     public void setAlbum(String albumID) throws RemoteException {
@@ -131,6 +148,12 @@ public class Bean {
     public Message<Album> getAlbum(Album obj) throws RemoteException {
         String json = server.detailsAlbum(obj);
         Message<Album> rsp = gson.fromJson(json, new TypeToken<Message<Shared.Album>>() {}.getType());
+        return rsp;
+    }
+
+    public Message<List<Album>> searchAlbum(List<String> obj) throws RemoteException {
+        String json = server.searchAlbum(obj);
+        Message<List<Album>> rsp = gson.fromJson(json, new TypeToken<Message<List<Shared.Album>>>() {}.getType());
         return rsp;
     }
 
@@ -188,6 +211,14 @@ public class Bean {
         return null;
     }
 
+    public List<String> getAlbumGenres() {
+        return this.album.getGenres();
+    }
+
+    public String getAlbumScore() {
+        return String.valueOf(album.avgScore());
+    }
+
     //ARTIST RELATED
 
     public void setArtist(String artistID) throws RemoteException {
@@ -209,6 +240,12 @@ public class Bean {
     public Message<Artist> getArtist(Artist obj) throws RemoteException {
         String json = server.detailsArtist(obj);
         Message<Artist> rsp = gson.fromJson(json, new TypeToken<Message<Shared.Artist>>() {}.getType());
+        return rsp;
+    }
+
+    public Message<List<Artist>> searchArtist(List<String> obj) throws RemoteException {
+        String json = server.searchArtist(obj);
+        Message<List<Artist>> rsp = gson.fromJson(json, new TypeToken<Message<List<Shared.Artist>>>() {}.getType());
         return rsp;
     }
 
@@ -240,6 +277,14 @@ public class Bean {
         if(this.artist != null)
             return this.artist.getAlbumTitles();
         return null;
+    }
+
+    public boolean artistHasNoContent() {
+        if(this.artist!=null) {
+            if(this.artist.getAlbumTitles().size() == 0)
+                return true;
+        }
+        return false;
     }
 
     //USER RELATED
@@ -276,13 +321,94 @@ public class Bean {
 		this.user.setPwd(password);
 	}
 
-	//MISC
+	//REVIEW
 
     public Message<Review> postReview(Review obj) throws RemoteException {
         obj.setReviewer(this.user);
         obj.setReviewed(this.album);
         String json = server.postReview(obj);
         Message<Review> rsp = gson.fromJson(json, new TypeToken<Message<Review>>() {}.getType());
+        return rsp;
+    }
+
+    public List<String> getAlbumReview() {
+        this.album.setReviews();
+        return this.album.getReview();
+    }
+
+    public String getReviewScore(int index) {
+        return String.valueOf(this.album.getReviewScore().get(index));
+    }
+
+    public String getReviewer(int index) {
+        return String.valueOf(this.album.getReviewUser().get(index));
+    }
+
+    //SEARCH RESULTS
+
+    public List<String> getSearchResultNames() {
+        return searchResultNames;
+    }
+
+    public String getSearchResultID(int index) {
+        if(this.searchResultIDs.size()>index)
+            return String.valueOf(searchResultIDs.get(index));
+        return null;
+    }
+
+    public String getAlbumResultArtist(int index) {
+        if(this.searchResultsAlbum.size()>index)
+            return this.searchResultsAlbum.get(index).getArtist();
+        return null;
+    }
+
+    public String getMusicResultArtist(int index) {
+        if(this.searchResultsMusic.size()>index)
+            return this.searchResultsMusic.get(index).getArtist();
+        return null;
+    }
+
+    public String getMusicResultAlbum(int index) {
+        if(this.searchResultsMusic.size()>index)
+            return this.searchResultsMusic.get(index).getAlbum();
+        return null;
+    }
+
+    public void setSearchResultsMusic (List<Music> list) {
+        this.searchResultNames.clear();
+        this.searchResultIDs.clear();
+        this.searchResultsMusic = list;
+        for(Music m : list) {
+            this.searchResultNames.add(m.getTitle());
+            this.searchResultIDs.add(m.getID());
+        }
+    }
+
+    public void setSearchResultsAlbum (List<Album> list) {
+        this.searchResultNames.clear();
+        this.searchResultIDs.clear();
+        this.searchResultsAlbum = list;
+        for(Album a: list) {
+            this.searchResultNames.add(a.getTitle());
+            this.searchResultIDs.add(a.getID());
+        }
+    }
+
+    public void setSearchResultsArtist (List<Artist> list) {
+        this.searchResultNames.clear();
+        this.searchResultIDs.clear();
+        this.searchResultsArtist = list;
+        for(Artist a : list) {
+            this.searchResultNames.add(a.getName());
+            this.searchResultIDs.add(a.getID());
+        }
+    }
+
+    //MISC
+
+    public MessageIdentified<Artist> removeArtist() throws RemoteException {
+        String json = server.removeArtist(this.user, this.artist);
+        MessageIdentified<Artist> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<Shared.Artist>>() {}.getType());
         return rsp;
     }
 }

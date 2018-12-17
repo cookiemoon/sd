@@ -23,29 +23,38 @@ public class PostArtistAction extends ActionSupport implements SessionAware {
 
     @Override
     public String execute() {
-        if(inputUtil.notEmptyOrNull(name, desc, start, end)) {
-            obj.setName(name);
-            obj.setDescription(desc);
-            List<Calendar> period = new ArrayList<>();
-            period.add(inputUtil.toCalendar(start));
-            period.add(inputUtil.toCalendar(end));
-            obj.setPeriod(period);
+        if(inputUtil.notEmptyOrNull(name, desc, start)) {
             try {
-                MessageIdentified<Artist> rsp = this.getBean().postArtist(obj);
-                System.out.println(rsp);
-                if (rsp.isAccepted()) {
-                    return SUCCESS;
-                } else {
-                    session.put("error", rsp.getErrors());
-                    session.put("back", "menu");
-                    return INPUT;
+                obj.setName(name);
+                obj.setDescription(desc);
+                List<Calendar> period = new ArrayList<>();
+                period.add(inputUtil.toCalendar(start, "period start"));
+                if(inputUtil.notEmptyOrNull(end))
+                    period.add(inputUtil.toCalendar(end, "period end"));
+                else
+                    period.add(null);
+                obj.setPeriod(period);
+                try {
+                    MessageIdentified<Artist> rsp = this.getBean().postArtist(obj);
+                    System.out.println(rsp);
+                    if (rsp.isAccepted()) {
+                        return SUCCESS;
+                    } else {
+                        session.put("error", rsp.getErrors());
+                        session.put("back", "menu");
+                        return INPUT;
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-            } catch (RemoteException e) {
-                e.printStackTrace();
+                session.put("error", "Server error.");
+                session.put("back", "menu");
+                return INPUT;
+            } catch (BadInput e) {
+                session.put("error", e.getMessage());
+                session.put("back", "menu");
+                return INPUT;
             }
-            session.put("error", "Server error.");
-            session.put("back", "menu");
-            return INPUT;
         } else {
             session.put("error", "Please do not leave any empty fields");
             session.put("back", "menu");

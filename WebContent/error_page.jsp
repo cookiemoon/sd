@@ -15,9 +15,17 @@
     <script>var username = ('${session.username}')</script>
 </head>
 <body>
-<p>An error has occurred.<br> ${session.error}</p>
-<s:form action="error" method="post">
-        <s:submit value="Back" name="back" />
-    </s:form>
+<c:choose>
+    <c:when test="${session.loggedin == true}">
+        <p>This action could not be processed. <br> ${session.error}</p>
+        <s:form action="error" method="post">
+            <s:submit value="Back" name="back" />
+        </s:form>
+    </c:when>
+    <c:otherwise>
+        <p><b>You don't belong here.</b></p><br>
+        <a href="/login.jsp">Please log in properly.</a>
+    </c:otherwise>
+</c:choose>
 </body>
 </html>

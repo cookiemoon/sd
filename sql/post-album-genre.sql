@@ -1,2 +1,2 @@
-INSERT INTO album_genre (album_id, genres_gname)
+INSERT INTO album_genres (album_id, genres_gname)
 VALUES (?,?);

@@ -125,6 +125,15 @@ public class Worker implements Runnable {
             case "search_music":
                 searchMusic(json);
                 break;
+            case "search_album":
+                searchAlbum(json);
+                break;
+            case "search_artist":
+                searchArtist(json);
+                break;
+            case "remove_artist":
+                removeArtist(json);
+                break;
             case "details_music":
                 getMusic(json);
                 break;
@@ -276,6 +285,13 @@ public class Worker implements Runnable {
                     album.setArtistID(rs.getInt("id"));
                 }
 
+                stmnt = setFields(con, "get-album-genres", data.getID());
+                rs = stmnt.executeQuery();
+
+                while(rs.next()) {
+                    album.addGenre(rs.getString("genres_gname"));
+                }
+
                 return album;
             }
 
@@ -369,6 +385,13 @@ public class Worker implements Runnable {
                     music.setArtistID(rs.getInt("id"));
                 }
 
+                stmnt = setFields(con, "get-music-genres", data.getID());
+                rs = stmnt.executeQuery();
+
+                while(rs.next()) {
+                    music.addGenre(rs.getString("genres_gname"));
+                }
+
                 return music;
             }
 
@@ -455,6 +478,8 @@ public class Worker implements Runnable {
 
                 if(genres!=null) {
                     for (String g : genres) {
+                        if(!setFields(con, "get-genre", g).executeQuery().next())
+                            setFields(con, "post-genre", g).executeUpdate();
                         stmnt = setFields(con, "post-album-genre", rs.getInt("id"), g);
                         stmnt.executeUpdate();
                     }
@@ -549,6 +574,8 @@ public class Worker implements Runnable {
 
                 if(genres!=null) {
                     for (String g : genres) {
+                        if(!setFields(con, "get-genre", g).executeQuery().next())
+                            setFields(con, "post-genre", g).executeUpdate();
                         stmnt = setFields(con, "post-music-genre", rs.getInt("id"), g);
                         stmnt.executeUpdate();
                     }
@@ -636,15 +663,15 @@ public class Worker implements Runnable {
                     inputUtil.oldOrNew(old.getDescription(), data.getDescription()),
                     old.getID());
 
+            stmnt.executeUpdate();
+            ResultSet rs = stmnt.getGeneratedKeys();
+
             if (!inputUtil.oldOrNew(old.getDescription(), data.getDescription()).equals(old.getDescription())) {
                 if(!setFields(con, "get-this-artist-editor", old.getID(), editor.getEmail()).executeQuery().next()) {
                     stmnt = setFields(con, "post-artist-editor", old.getID(), editor.getEmail());
                     stmnt.executeUpdate();
                 }
             }
-
-            stmnt.executeUpdate();
-            ResultSet rs = stmnt.getGeneratedKeys();
 
             return rs;
         } catch (SQLException e) {
@@ -695,6 +722,19 @@ public class Worker implements Runnable {
 
     //Search functions
 
+    private ResultSet search(String obj, String term, String type, Connection con) {
+        try {
+            String sql = "search-"+obj+"-"+type;
+            term = "%"+term+"%";
+            PreparedStatement stmnt = setFields(con, sql, term);
+
+            return stmnt.executeQuery();
+        } catch (SQLException|MalformedQuery e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     //Misc
 
     private ResultSet makeEditor(User grantee, Connection con) {
@@ -710,6 +750,24 @@ public class Worker implements Runnable {
         } catch (MalformedQuery e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private boolean removeArtist(Artist selected, Connection con) {
+        try {
+            PreparedStatement stmnt = setFields(con, "delete-period", selected.getID());
+            stmnt.executeUpdate();
+
+            stmnt = setFields(con, "delete-artist-editor", selected.getID());
+            stmnt.executeUpdate();
+
+            stmnt = setFields(con, "delete-artist", selected.getID());
+            stmnt.executeUpdate();
+
+            return true;
+        } catch (SQLException|MalformedQuery e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -769,7 +827,6 @@ public class Worker implements Runnable {
                 }
                 postUser(user, con);
                 con.commit();
-
                 messageClientSuccess(req, user);
             } else {
                 messageClientError(req, "Email is already in use.");
@@ -1269,37 +1326,133 @@ public class Worker implements Runnable {
         }
     }
 
+    private void removeArtist(String json) {
+        MessageIdentified<Artist> req = gson.fromJson(json, new TypeToken<MessageIdentified<Artist>>() {}.getType());
+        User user = req.getUser();
+
+        Connection con = db.getConn();
+        Artist artist = req.getObj();
+
+        try {
+            userIsEditor(user);
+
+            con.setAutoCommit(false);
+
+            if (removeArtist(artist, con)) {
+                con.commit();
+                con.close();
+
+                messageClientSuccess(req, null);
+            } else {
+                messageClientError(req, "Artist has albums and/or music, cannot be removed.");
+                con.close();
+            }
+        } catch (SQLException e) {
+            internalServerError(con, req);
+        } catch (NotAuthorized notAuthorized) {
+            messageClientError(req, "User not authorized");
+        }
+    }
+
     //Search
 
     private void searchMusic(String json) {
         Message<List<String>> req = gson.fromJson(json, new TypeToken<Message<List<String>>>() {}.getType());
         List<String> terms = req.getObj();
+
         Message<List<Music>> resp = new Message<>(req.getType(), "response", null);
         resp.embedMsgid(req.getMsgid());
+
         List<Music> obj = new ArrayList<>();
         Music music = new Music(-1);
 
-        final String SEARCHMUSIC_SQL = sqlCommands.get("get-music");
         Connection con = db.getConn();
         
         try {
 
             con.setAutoCommit(false);
 
-            PreparedStatement stmnt = con.prepareStatement(SEARCHMUSIC_SQL);
-            stmnt.setString(1, terms.get(0));
-            stmnt.setString(2, terms.get(1));
-            stmnt.setString(3, terms.get(2));
-            ResultSet rs = stmnt.executeQuery();
+            ResultSet rs = search("music", terms.get(0), terms.get(1), con);
 
             if(!rs.isBeforeFirst()) {
-                terms.set(0, "No matching results were found");
+                messageClientError(resp, "No search results to show.");
             } else {
                 while(rs.next()) {
-                    //music = new Music(rs.getInt("id"), rs.getInt("duration"), rs.getString("title"), rs.getString("lyrics"), null, null, null);
+                    music = getMusic(new Music(rs.getInt("id")), con);
+                    obj.add(music);
                 }
+            }
 
-                obj.add(music);
+            con.close();
+
+            messageClientSuccess(resp, obj);
+
+        } catch (SQLException e) {
+            internalServerError(con, req);
+        }
+    }
+
+    private void searchAlbum(String json) {
+        Message<List<String>> req = gson.fromJson(json, new TypeToken<Message<List<String>>>() {}.getType());
+        List<String> terms = req.getObj();
+
+        Message<List<Album>> resp = new Message<>(req.getType(), "response", null);
+        resp.embedMsgid(req.getMsgid());
+
+        List<Album> obj = new ArrayList<>();
+        Album album = new Album(-1);
+
+        Connection con = db.getConn();
+
+        try {
+
+            con.setAutoCommit(false);
+
+            ResultSet rs = search("album", terms.get(0), terms.get(1), con);
+
+            if(!rs.isBeforeFirst()) {
+                messageClientError(resp, "No search results to show.");
+            } else {
+                while(rs.next()) {
+                    album = getAlbum(new Album(rs.getInt("id")), con);
+                    obj.add(album);
+                }
+            }
+
+            con.close();
+
+            messageClientSuccess(resp, obj);
+
+        } catch (SQLException e) {
+            internalServerError(con, req);
+        }
+    }
+
+    private void searchArtist(String json) {
+        Message<List<String>> req = gson.fromJson(json, new TypeToken<Message<List<String>>>() {}.getType());
+        List<String> terms = req.getObj();
+
+        Message<List<Artist>> resp = new Message<>(req.getType(), "response", null);
+        resp.embedMsgid(req.getMsgid());
+
+        List<Artist> obj = new ArrayList<>();
+        Artist artist = new Artist(-1);
+
+        Connection con = db.getConn();
+
+        try {
+
+            con.setAutoCommit(false);
+
+            ResultSet rs = search("artist", terms.get(0), terms.get(1), con);
+
+            if(!rs.isBeforeFirst()) {
+                messageClientError(resp, "No search results to show.");
+            } else {
+                while(rs.next()) {
+                    artist = getArtist(new Artist(rs.getInt("id")), con);
+                    obj.add(artist);
+                }
             }
 
             con.close();
@@ -1408,17 +1561,6 @@ public class Worker implements Runnable {
     }
 
     //Add-ons
-
-    private boolean isSequential(List<Integer> numbers) {
-        Collections.sort(numbers);
-
-        for (int i=0; i<numbers.size(); i++) {
-            if(numbers.get(i) != i+1)
-                return false; 
-        }
-
-        return true;
-    }
 
     private boolean validPeriods(List<Calendar> dates) {
         int size = dates.size();

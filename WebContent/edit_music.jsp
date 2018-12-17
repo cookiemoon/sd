@@ -19,6 +19,7 @@
 <c:choose>
     <c:when test="${session.editor == true}">
         <a href="/edit.jsp">Back</a>
+        <p>To leave fields as-is, leave the text box empty.</p>
         <s:form action="edit_music" method="post">
             <p>Music ID:</p>
             <s:textfield name="musicID" /><br>

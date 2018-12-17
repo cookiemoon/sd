@@ -29,6 +29,8 @@
             <s:textfield name="duration" /><br>
             <p>Lyrics:</p>
             <s:textfield name="lyrics" /><br>
+            <p>Genres separated by ',':</p>
+            <s:textfield name="genres" /><br>
             <s:submit value="Post music"/>
         </s:form>
     </c:when>

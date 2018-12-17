@@ -24,7 +24,7 @@ public interface ServerInterface extends Remote {
 
     // Search
     String  searchAlbum(List<String> searchTerms) throws RemoteException;
-    String  searchMusic(List<String> promptListStr) throws RemoteException;
+    String  searchMusic(List<String> searchTerms) throws RemoteException;
     String  searchArtist(List<String> searchTerms) throws RemoteException;
 
     // Edit
@@ -42,6 +42,7 @@ public interface ServerInterface extends Remote {
 
     // Other
     String makeEditor(User self, String grantee) throws RemoteException;
+    String removeArtist(User self, Artist selected) throws RemoteException;
 
     String associateDropbox(User user, String code) throws RemoteException;
 }

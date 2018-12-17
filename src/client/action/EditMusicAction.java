@@ -20,30 +20,33 @@ public class EditMusicAction extends ActionSupport implements SessionAware {
     @Override
     public String execute() {
         if(inputUtil.notEmptyOrNull(musicID)) {
-            obj.setTitle(title);
-            obj.setLyrics(lyrics);
-            obj.setID(Integer.parseInt(musicID));
-            if(inputUtil.notEmptyOrNull(duration))
-                obj.setDuration(Integer.parseInt(duration));
-            else
-                obj.setDuration(-1);
-            obj.setOld(new Music(Integer.parseInt(musicID)));
             try {
-                MessageIdentified<Music> rsp = this.getBean().editMusic(obj);
-                System.out.println(rsp);
-                if (rsp.isAccepted()) {
-                    return SUCCESS;
-                } else {
-                    session.put("error", rsp.getErrors());
-                    session.put("back", "menu");
-                    return INPUT;
+                obj.setTitle(title);
+                obj.setLyrics(lyrics);
+                obj.setID(inputUtil.StringToInt(musicID, "music ID"));
+                obj.setDuration(inputUtil.StringToInt(duration, "duration"));
+                obj.setOld(new Music(Integer.parseInt(musicID)));
+                try {
+                    MessageIdentified<Music> rsp = this.getBean().editMusic(obj);
+                    System.out.println(rsp);
+                    if (rsp.isAccepted()) {
+                        return SUCCESS;
+                    } else {
+                        session.put("error", rsp.getErrors());
+                        session.put("back", "menu");
+                        return INPUT;
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-            } catch (RemoteException e) {
-                e.printStackTrace();
+                session.put("error", "Server error.");
+                session.put("back", "menu");
+                return INPUT;
+            } catch (BadInput e) {
+                session.put("error", e.getMessage());
+                session.put("back", "menu");
+                return INPUT;
             }
-            session.put("error", "Server error.");
-            session.put("back", "menu");
-            return INPUT;
         } else {
             session.put("error", "Please do not leave ID field empty.");
             session.put("back", "menu");

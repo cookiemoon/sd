@@ -31,6 +31,8 @@
             <s:textfield name="release_date" /><br>
             <p>Label:</p>
             <s:textfield name="label" /><br>
+            <p>Genres separated by ',':</p>
+            <s:textfield name="genres" /><br>
             <s:submit value="Post album"/>
         </s:form>
     </c:when>

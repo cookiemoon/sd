@@ -33,7 +33,7 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
     // Getters
     public String getID() { return id; }
 
-    // Cosntructors
+    // Constructors
     public RmiServer(RespBroker broker, AtomicInteger msgID) throws RemoteException {
         super();
         this.broker = broker;
@@ -221,6 +221,14 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
     public String associateDropbox(User user, String code) throws RemoteException {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("associate_dropbox", "users", user, code, messageID);
+        
+        return waitForResponse(json, messageID);
+    }
+
+    @Override
+    public String removeArtist(User self, Artist selected) {
+        int messageID = msgID.getAndIncrement();
+        String json = JSON.messageIdRequest("remove_artist", "null", self, selected, messageID);
 
         return waitForResponse(json, messageID);
     }

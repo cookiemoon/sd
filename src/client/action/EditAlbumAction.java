@@ -23,35 +23,38 @@ public class EditAlbumAction extends ActionSupport implements SessionAware {
     @Override
     public String execute() {
         if(inputUtil.notEmptyOrNull(albumID)) {
-            obj.setTitle(title);
-            obj.setDescription(desc);
-            obj.setId(Integer.parseInt(albumID));
-            obj.setLabel(label);
-            if(inputUtil.notEmptyOrNull(release_date))
-                obj.setReleaseDate(inputUtil.toCalendar(release_date));
-            else
-                obj.setReleaseDate(null);
-            obj.setOld(new Album(Integer.parseInt(albumID)));
             try {
-                MessageIdentified<Album> rsp = this.getBean().editAlbum(obj);
-                System.out.println(rsp);
-                if (rsp.isAccepted()) {
-                    for (String user : rsp.getObj().getEditors()) {
-                        if (!user.equals(this.session.get("username")))
-                            WebSocketAnnotation.onlineUsers.get(user).sendMessage(user + " edited album '" + rsp.getObj().getTitle() + "'");
+                obj.setTitle(title);
+                obj.setDescription(desc);
+                obj.setId(inputUtil.StringToInt(albumID, "album ID"));
+                obj.setLabel(label);
+                obj.setReleaseDate(inputUtil.toCalendar(release_date, "release date"));
+                obj.setOld(new Album(Integer.parseInt(albumID)));
+                try {
+                    MessageIdentified<Album> rsp = this.getBean().editAlbum(obj);
+                    System.out.println(rsp);
+                    if (rsp.isAccepted()) {
+                        for (String user : rsp.getObj().getEditors()) {
+                            if (!user.equals(this.session.get("username")))
+                                WebSocketAnnotation.onlineUsers.get(user).sendMessage(user + " edited album '" + rsp.getObj().getTitle() + "'");
+                        }
+                        return SUCCESS;
+                    } else {
+                        session.put("error", rsp.getErrors());
+                        session.put("back", "menu");
+                        return INPUT;
                     }
-                    return SUCCESS;
-                } else {
-                    session.put("error", rsp.getErrors());
-                    session.put("back", "menu");
-                    return INPUT;
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-            } catch (RemoteException e) {
-                e.printStackTrace();
+                session.put("error", "Server error.");
+                session.put("back", "menu");
+                return INPUT;
+            } catch (BadInput e) {
+                session.put("error", e.getMessage());
+                session.put("back", "menu");
+                return INPUT;
             }
-            session.put("error", "Server error.");
-            session.put("back", "menu");
-            return INPUT;
         } else {
             session.put("error", "Please do not ID field empty.");
             session.put("back", "menu");

@@ -17,37 +17,49 @@ public class PostAlbumAction extends ActionSupport implements SessionAware {
     private String artistID;
     private String release_date;
     private String label;
+    private String genres;
     private Album obj = new Album(-1);
 
     @Override
     public String execute() {
-        if(inputUtil.notEmptyOrNull(title, desc, artistID, release_date)) {
-            obj.setTitle(title);
-            obj.setDescription(desc);
-            obj.setLabel(label);
-            obj.setReleaseDate(inputUtil.toCalendar(release_date));
-            obj.setArtistID(Integer.parseInt(artistID));
+        if(inputUtil.notEmptyOrNull(title, desc, artistID, release_date, genres)) {
             try {
-                MessageIdentified<Album> rsp = this.getBean().postAlbum(obj);
-                System.out.println(rsp);
-                if (rsp.isAccepted()) {
-                    return SUCCESS;
-                } else {
-                    session.put("error", rsp.getErrors());
-                    session.put("back", "menu");
-                    return INPUT;
+                obj.setTitle(title);
+                obj.setDescription(desc);
+                obj.setLabel(label);
+                obj.setReleaseDate(inputUtil.toCalendar(release_date, "release date"));
+                obj.setArtistID(inputUtil.StringToInt(artistID, "artist ID"));
+                obj.setGenres(inputUtil.separateBy(genres, ","));
+                try {
+                    MessageIdentified<Album> rsp = this.getBean().postAlbum(obj);
+                    System.out.println(rsp);
+                    if (rsp.isAccepted()) {
+                        return SUCCESS;
+                    } else {
+                        session.put("error", rsp.getErrors());
+                        session.put("back", "menu");
+                        return INPUT;
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-            } catch (RemoteException e) {
-                e.printStackTrace();
+                session.put("error", "Server error.");
+                session.put("back", "menu");
+                return INPUT;
+            } catch (BadInput e) {
+                session.put("error", e.getMessage());
+                session.put("back", "menu");
+                return INPUT;
             }
-            session.put("error", "Server error.");
-            session.put("back", "menu");
-            return INPUT;
         } else {
             session.put("error", "Please do not leave any empty fields");
             session.put("back", "menu");
             return INPUT;
         }
+    }
+
+    public void setGenres(String genres) {
+        this.genres = genres;
     }
 
     public void setLabel(String label) {

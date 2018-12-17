@@ -21,31 +21,37 @@ public class EditArtistAction extends ActionSupport implements SessionAware {
     @Override
     public String execute() {
         if(inputUtil.notEmptyOrNull(artistID)) {
-            obj.setName(name);
-            obj.setDescription(desc);
-            obj.setId(Integer.parseInt(artistID));
-            obj.setOld(new Artist(Integer.parseInt(artistID), "", ""));
             try {
-                MessageIdentified<Artist> rsp = this.getBean().editArtist(obj);
-                System.out.println(rsp);
-                if (rsp.isAccepted()) {
-                    for (String user : rsp.getObj().getEditors()) {
-                        if (!user.equals(this.session.get("username")))
-                            WebSocketAnnotation.onlineUsers.get(user).sendMessage(user + " edited artist '" + rsp.getObj().getName() + "'");
-                    }
+                obj.setName(name);
+                obj.setDescription(desc);
+                obj.setId(inputUtil.StringToInt(artistID, "artist ID"));
+                obj.setOld(new Artist(Integer.parseInt(artistID), "", ""));
+                try {
+                    MessageIdentified<Artist> rsp = this.getBean().editArtist(obj);
+                    System.out.println(rsp);
+                    if (rsp.isAccepted()) {
+                        for (String user : rsp.getObj().getEditors()) {
+                            if (!user.equals(this.session.get("username")))
+                                WebSocketAnnotation.onlineUsers.get(user).sendMessage(user + " edited artist '" + rsp.getObj().getName() + "'");
+                        }
 
-                    return SUCCESS;
-                } else {
-                    session.put("error", rsp.getErrors());
-                    session.put("back", "menu");
-                    return INPUT;
+                        return SUCCESS;
+                    } else {
+                        session.put("error", rsp.getErrors());
+                        session.put("back", "menu");
+                        return INPUT;
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-            } catch (RemoteException e) {
-                e.printStackTrace();
+                session.put("error", "Server error.");
+                session.put("back", "menu");
+                return INPUT;
+            } catch (BadInput e) {
+                session.put("error", e.getMessage());
+                session.put("back", "menu");
+                return INPUT;
             }
-            session.put("error", "Server error.");
-            session.put("back", "menu");
-            return INPUT;
         } else {
             session.put("error", "Please do not leave ID field empty.");
             session.put("back", "menu");

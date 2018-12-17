@@ -14,13 +14,56 @@ public class Album implements Serializable {
     private Calendar releaseDate;
     private List<Integer> musicIDs = new ArrayList<>();
     private List<String> musicTitles = new ArrayList<>();
+    private List<String> review = new ArrayList<>();
+    private List<Integer> reviewScore = new ArrayList<>();
+    private List<String> reviewUser = new ArrayList<>();
     private int artistID;
     private String artist;
     private String details;
     private Album old;
 
-    public List<Review> getReviews() {
-        return reviews;
+    public static Album getInstance() {
+        int artistID = inputUtil.promptInt("Album ID: ");
+        String title = inputUtil.promptStr("Title: ");
+        String desc = inputUtil.promptStr("Description: ");
+        String label = inputUtil.promptStr("Label: ");
+        Calendar releaseDate = inputUtil.promptDate("Release date: ", false);
+        Album res = new Album(-1, title, desc, releaseDate, label);
+        res.setArtistID(artistID);
+        return res;
+    }
+
+    public static Album editInstance(int albumID) {
+        String title = inputUtil.promptStr("New title: ");
+        String desc = inputUtil.promptStr("New description: ");
+        String label = inputUtil.promptStr("New label: ");
+        Calendar releaseDate = inputUtil.promptDate("New release date: ", false);
+        Album res = new Album(albumID, title, desc, releaseDate, label);
+        return res;
+    }
+
+    public List<String> getReview() {
+        return review;
+    }
+
+    public void addReview(String review) {
+        this.review.add(review);
+    }
+
+    public List<Integer> getReviewScore() {
+        return reviewScore;
+    }
+
+    public void addReviewScore(int reviewScore) {
+        this.reviewScore.add(reviewScore);
+    }
+
+    public List<String> getReviewUser() {
+        return reviewUser;
+    }
+
+    public void addReviewUser(String reviewUser) {
+        this.reviewUser.add(reviewUser);
     }
 
     public List<String> getEditors() {
@@ -60,11 +103,15 @@ public class Album implements Serializable {
         return total/count;
     }
 
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
+    }
+
     public void addReview(Review m) { this.reviews.add(m); }
 
     public void addGenre(String genre) { this.genres.add(genre); }
 
-    public List<Review> getReview () { return this.reviews; }
+    public List<Review> getReviews () { return this.reviews; }
 
     public int getID() {
         return id;
@@ -115,6 +162,22 @@ public class Album implements Serializable {
     }
 
     public String getDetails() {
+        int cnt = 1;
+        this.details = "Title: "+this.title
+                        + "\nArtist: " + this.artist
+                        + "\nRelease date: " + inputUtil.formatDate(releaseDate)
+                        + "\nDescription:\n" + this.description
+                        + "\nMusic:\n\n";
+        for (String music : musicTitles) {
+            this.details = this.details + String.valueOf(cnt) + ". " + music + "\n";
+            cnt++;
+        }
+        this.details = this.details + "Reviews:\n";
+        for (Review r : reviews) {
+            this.details = this.details + "\nReviewer: " + r.getReviewer().getEmail()
+                            + "\nScore: " + String.valueOf(r.getScore())
+                            + "\nReview:\n" + r.getReviewText() + "\n";
+        }
         return this.details;
     }
 
@@ -160,5 +223,13 @@ public class Album implements Serializable {
 
     public List<Integer> getMusicIDs() {
         return this.musicIDs;
+    }
+
+    public void setReviews() {
+        for (Review r : reviews) {
+            this.review.add(r.getReviewText());
+            this.reviewScore.add(r.getScore());
+            this.reviewUser.add(r.getReviewer().getEmail());
+        }
     }
 }

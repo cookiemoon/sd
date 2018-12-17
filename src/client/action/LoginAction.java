@@ -3,9 +3,12 @@
  */
 package client.action;
 
+import REST.DropBoxApi2;
 import Shared.Message;
 import Shared.User;
 import client.model.Bean;
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.oauth.OAuthService;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.interceptor.SessionAware;
 
@@ -16,6 +19,9 @@ public class LoginAction extends ActionSupport implements SessionAware {
 	private static final long serialVersionUID = 4L;
 	private Map<String, Object> session;
 	private String username = null, password = null;
+	private static final String API_APP_KEY = "xrd0027mffnnfuq";
+	private static final String API_APP_SECRET = "d31u56fva1fxg40";
+	private static final String CALLBACK_URL = "http://localhost:8080/Hey/dropbox";
 
 	@Override
 	public String execute() {
@@ -24,11 +30,23 @@ public class LoginAction extends ActionSupport implements SessionAware {
 			this.getBean().setPassword(this.password);
 			try {
 				Message<User> rsp = this.getBean().login();
+				System.out.println("Printing login rsp");
 				System.out.println(rsp);
 				if (rsp.isAccepted()) {
 					session.put("username", username);
 					session.put("loggedin", true); // this marks the user as logged in
 					session.put("editor", rsp.getObj().isEditor());
+
+					OAuthService service = new ServiceBuilder()
+							.provider(DropBoxApi2.class)
+							.apiKey(API_APP_KEY)
+							.apiSecret(API_APP_SECRET)
+							.callback(CALLBACK_URL)
+							.build();
+
+					session.put("dropbox_auth_url", service.getAuthorizationUrl(null));
+					session.put("dropbox_associated", false);
+					session.put("dropbox_token", "");
 					return SUCCESS;
 				} else {
 					session.put("error", rsp.getErrors());

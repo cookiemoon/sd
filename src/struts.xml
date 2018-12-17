@@ -112,6 +112,10 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
           <result name="input">/error_page.jsp</result>
       </action>
 
+      <action name="dropbox" class="client.action.DropboxAction" method="execute">
+          <result name="success">/dropbox.jsp</result>
+      </action>
+
   </package>
 
 </struts>

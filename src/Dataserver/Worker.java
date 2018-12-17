@@ -77,6 +77,9 @@ public class Worker implements Runnable {
             case "login":
                 login(json);
                 break;
+            case "associate_dropbox":
+                associateDropbox(json);
+                break;
             case "logout":
                 //logout(json);
                 break;
@@ -1307,6 +1310,11 @@ public class Worker implements Runnable {
             internalServerError(con, req);
         }
     }
+
+    private void associateDropbox(String json) {
+        
+    }
+
 
     private void searchSelfFile(String json) {
         Message<List<String>> req = gson.fromJson(json, new TypeToken<Message<List<String>>>() {}.getType());

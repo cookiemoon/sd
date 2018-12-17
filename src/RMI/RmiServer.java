@@ -216,4 +216,12 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
 
         return waitForResponse(json, messageID);
     }
+
+    @Override
+    public String associateDropbox(User user, String code) throws RemoteException {
+        int messageID = msgID.getAndIncrement();
+        String json = JSON.messageIdRequest("associate_dropbox", "users", user, code, messageID);
+
+        return waitForResponse(json, messageID);
+    }
 }

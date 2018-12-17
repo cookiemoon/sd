@@ -261,6 +261,12 @@ public class Bean {
 		MessageIdentified<String> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<String>>() {}.getType());
 		return rsp;
 	}
+
+	public MessageIdentified<String> associateDropbox (String code) throws RemoteException {
+        String json = server.associateDropbox(this.user, code);
+        MessageIdentified<String> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<String>>() {}.getType());
+        return rsp;
+    }
 	
 	public void setUsername(String username) {
 		this.user.setEmail(username);

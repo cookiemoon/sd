@@ -43,4 +43,5 @@ public interface ServerInterface extends Remote {
     // Other
     String makeEditor(User self, String grantee) throws RemoteException;
 
+    String associateDropbox(User user, String code) throws RemoteException;
 }

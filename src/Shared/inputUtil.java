@@ -11,13 +11,39 @@ import java.util.stream.Collectors;
 import java.sql.Date;
 
 public class inputUtil implements Serializable {
-    static final int DAY_START	= 0;
+    static final int DAY_START	= 1;
+    static final int MONTH_START= 0;
+    static final int MONTH_END	= 11;
     static final int DAY_END	= 31;
     static final int YEAR_START = 1900;
     static final int YEAR_END   = Year.now().getValue();
     static Scanner scan = new Scanner(System.in);
     static String[] MONTHS = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
 
+
+    static public int StringToInt(String s, String param) throws BadInput {
+        try {
+            int res = Integer.parseInt(s);
+            if(res < 0) {
+                throw new BadInput(param, "invalid negative value");
+            }
+            return res;
+        } catch (Exception e) {
+            throw new BadInput(param, "the parameters entered were not numbers.");
+        }
+    }
+
+    static public int StringToInt(String s, String param, int lower, int upper) throws BadInput {
+        try {
+            int res = Integer.parseInt(s);
+            if(res < lower || res > upper) {
+                throw new BadInput(param, param + " was not between limit of " + String.valueOf(lower) + "-"+ String.valueOf(upper));
+            }
+            return res;
+        } catch (Exception e) {
+            throw new BadInput(param, "the parameters entered were not numbers.");
+        }
+    }
 
     static public boolean notEmptyOrNull(String... strings) {
         for(String s : strings) {
@@ -47,14 +73,23 @@ public class inputUtil implements Serializable {
         }
     }
 
-    static public Calendar toCalendar(String date) {
+    static public Calendar toCalendar(String date, String param) throws BadInput {
         try {
             String[] parts = date.split("/");
             Calendar c = new GregorianCalendar();
-            c.set(Integer.parseInt(parts[2]),Integer.parseInt(parts[1]),Integer.parseInt(parts[0]));
+            int year = Integer.parseInt(parts[2]);
+            if(year < YEAR_START || year > YEAR_END)
+                throw new BadInput(param, "invalid year in date.");
+            int month = Integer.parseInt(parts[1])-1;
+            if(month < MONTH_START || month > MONTH_END)
+                throw new BadInput(param, "invalid month in date.");
+            int day = Integer.parseInt(parts[0]);
+            if(day < DAY_START || day > DAY_END)
+                throw new BadInput(param, "invalid day in date.");
+            c.set(year,month,day);
             return c;
-        } catch (Exception e) {
-            return null;
+        } catch (NumberFormatException e) {
+            throw new BadInput(param, "the parameters entered were not numbers.");
         }
     }
 

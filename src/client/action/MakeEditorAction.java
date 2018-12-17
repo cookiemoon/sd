@@ -14,13 +14,19 @@ public class MakeEditorAction extends ActionSupport implements SessionAware {
     private String grantee;
 
     @Override
-    public String execute() throws RemoteException {
-        MessageIdentified<String> rsp = this.getBean().grantPrivilege(this.grantee);
-        if(rsp.isAccepted())
-            return SUCCESS;
-        else {
-            session.put("error", rsp.getErrors());
-            session.put("back", "login");
+    public String execute() {
+        try {
+            MessageIdentified<String> rsp = this.getBean().grantPrivilege(this.grantee);
+            if (rsp.isAccepted())
+                return SUCCESS;
+            else {
+                session.put("error", rsp.getErrors());
+                session.put("back", "menu");
+                return INPUT;
+            }
+        } catch (RemoteException e) {
+            session.put("error", "Server error");
+            session.put("back", "menu");
             return INPUT;
         }
     }

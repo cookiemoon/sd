@@ -1495,15 +1495,10 @@ public class Worker implements Runnable {
 
             ResultSet rs = postDropbox(user, token, con);
 
-            if(rs!=null) {
-                con.commit();
-                con.close();
+            con.commit();
+            con.close();
 
-                messageClientSuccess(req, null);
-            } else {
-                internalServerError(con, req);
-                con.close();
-            }
+            messageClientSuccess(req, null);
 
         } catch (SQLException e) {
             e.printStackTrace();

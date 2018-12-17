@@ -22,6 +22,26 @@ public class Album implements Serializable {
     private String details;
     private Album old;
 
+    public static Album getInstance() {
+        int artistID = inputUtil.promptInt("Album ID: ");
+        String title = inputUtil.promptStr("Title: ");
+        String desc = inputUtil.promptStr("Description: ");
+        String label = inputUtil.promptStr("Label: ");
+        Calendar releaseDate = inputUtil.promptDate("Release date: ", false);
+        Album res = new Album(-1, title, desc, releaseDate, label);
+        res.setArtistID(artistID);
+        return res;
+    }
+
+    public static Album editInstance(int albumID) {
+        String title = inputUtil.promptStr("New title: ");
+        String desc = inputUtil.promptStr("New description: ");
+        String label = inputUtil.promptStr("New label: ");
+        Calendar releaseDate = inputUtil.promptDate("New release date: ", false);
+        Album res = new Album(albumID, title, desc, releaseDate, label);
+        return res;
+    }
+
     public List<String> getReview() {
         return review;
     }
@@ -50,7 +70,7 @@ public class Album implements Serializable {
         return editors;
     }
 
-    private List<String> genres;
+    private List<String> genres = new ArrayList<>();
     private List<Review> reviews = new ArrayList<>();
     private List<String> editors = new ArrayList<>();
     private boolean edited = false;
@@ -142,6 +162,22 @@ public class Album implements Serializable {
     }
 
     public String getDetails() {
+        int cnt = 1;
+        this.details = "Title: "+this.title
+                        + "\nArtist: " + this.artist
+                        + "\nRelease date: " + inputUtil.formatDate(releaseDate)
+                        + "\nDescription:\n" + this.description
+                        + "\nMusic:\n\n";
+        for (String music : musicTitles) {
+            this.details = this.details + String.valueOf(cnt) + ". " + music + "\n";
+            cnt++;
+        }
+        this.details = this.details + "Reviews:\n";
+        for (Review r : reviews) {
+            this.details = this.details + "\nReviewer: " + r.getReviewer().getEmail()
+                            + "\nScore: " + String.valueOf(r.getScore())
+                            + "\nReview:\n" + r.getReviewText() + "\n";
+        }
         return this.details;
     }
 

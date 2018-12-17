@@ -17,6 +17,18 @@ public class Artist implements Serializable {
     private List<Integer> albumIDs = new ArrayList<>();
     private List<String> editors = new ArrayList<>();
 
+    public static Artist getInstance() {
+        String name = inputUtil.promptStr("Name: ");
+        String desc = inputUtil.promptStr("Description: ");
+        Calendar periodStart = inputUtil.promptDate("Period start: ", false);
+        Calendar periodEnd = inputUtil.promptDate("Period end: ", true);
+        List<Calendar> period = new ArrayList<>();
+        period.add(periodStart);
+        period.add(periodEnd);
+        Artist res = new Artist(-1, name, desc, period);
+        return res;
+    }
+
     public boolean isEdited() {
         return edited;
     }

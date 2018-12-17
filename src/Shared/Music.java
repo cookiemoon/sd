@@ -10,7 +10,7 @@ public class Music implements Serializable {
     private String title;
     private String lyrics;
     private String album;
-    private List<String> genres;
+    private List<String> genres = new ArrayList<>();
     private String details;
     private int albumID;
     private int artistID;
@@ -29,6 +29,16 @@ public class Music implements Serializable {
         this.title = null;
         this.duration = -1;
         this.lyrics = null;
+    }
+
+    public static Music getInstance() {
+        int albumID = inputUtil.promptInt("Album ID: ");
+        String title = inputUtil.promptStr("Title: ");
+        int duration = inputUtil.promptInt("Duration: ");
+        String lyrics = inputUtil.promptStr("Lyrics: ");
+        Music res = new Music(-1, title, duration, lyrics);
+        res.setAlbumID(albumID);
+        return res;
     }
 
     public void setGenres(List<String> genres) {

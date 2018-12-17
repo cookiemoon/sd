@@ -33,7 +33,7 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
     // Getters
     public String getID() { return id; }
 
-    // Cosntructors
+    // Constructors
     public RmiServer(RespBroker broker, AtomicInteger msgID) throws RemoteException {
         super();
         this.broker = broker;

@@ -22,6 +22,15 @@ public class Review implements Serializable {
         return new Review(score, text, self, toReview);
     }
 
+    public static Review getInstance(User self) {
+        int albumID = inputUtil.promptInt("Album ID: ");
+        String text = inputUtil.promptStr("Review: ");
+        int score = inputUtil.promptIntBound(0, 10, "Score: ", false);
+        Album reviewed = new Album(albumID);
+        Review res = new Review(score, text, self, reviewed);
+        return res;
+    }
+
     public int getScore() {
         return score;
     }

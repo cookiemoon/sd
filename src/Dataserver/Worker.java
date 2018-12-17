@@ -77,9 +77,6 @@ public class Worker implements Runnable {
             case "login":
                 login(json);
                 break;
-            case "logout":
-                //logout(json);
-                break;
             case "post":
                 switch (table) {
                     case "music":
@@ -121,6 +118,15 @@ public class Worker implements Runnable {
                 break;
             case "search_music":
                 searchMusic(json);
+                break;
+            case "search_album":
+                searchAlbum(json);
+                break;
+            case "search_artist":
+                searchArtist(json);
+                break;
+            case "remove_artist":
+                removeArtist(json);
                 break;
             case "details_music":
                 getMusic(json);
@@ -723,6 +729,24 @@ public class Worker implements Runnable {
         }
     }
 
+    private boolean removeArtist(Artist selected, Connection con) {
+        try {
+            PreparedStatement stmnt = setFields(con, "delete-period", selected.getID());
+            stmnt.executeUpdate();
+
+            stmnt = setFields(con, "delete-artist-editor", selected.getID());
+            stmnt.executeUpdate();
+
+            stmnt = setFields(con, "delete-artist", selected.getID());
+            stmnt.executeUpdate();
+
+            return true;
+        } catch (SQLException|MalformedQuery e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     //Login specific functions: these serve to manage the user's session
     //Login, register, and logout
 
@@ -1278,6 +1302,34 @@ public class Worker implements Runnable {
         }
     }
 
+    private void removeArtist(String json) {
+        MessageIdentified<Artist> req = gson.fromJson(json, new TypeToken<MessageIdentified<Artist>>() {}.getType());
+        User user = req.getUser();
+
+        Connection con = db.getConn();
+        Artist artist = req.getObj();
+
+        try {
+            userIsEditor(user);
+
+            con.setAutoCommit(false);
+
+            if (removeArtist(artist, con)) {
+                con.commit();
+                con.close();
+
+                messageClientSuccess(req, null);
+            } else {
+                messageClientError(req, "Artist has albums and/or music, cannot be removed.");
+                con.close();
+            }
+        } catch (SQLException e) {
+            internalServerError(con, req);
+        } catch (NotAuthorized notAuthorized) {
+            messageClientError(req, "User not authorized");
+        }
+    }
+
     //Search
 
     private void searchMusic(String json) {
@@ -1483,17 +1535,6 @@ public class Worker implements Runnable {
     }
 
     //Add-ons
-
-    private boolean isSequential(List<Integer> numbers) {
-        Collections.sort(numbers);
-
-        for (int i=0; i<numbers.size(); i++) {
-            if(numbers.get(i) != i+1)
-                return false; 
-        }
-
-        return true;
-    }
 
     private boolean validPeriods(List<Calendar> dates) {
         int size = dates.size();

@@ -207,7 +207,7 @@ public class Bean {
         return null;
     }
 
-    public boolean ArtistHasNoContent() {
+    public boolean artistHasNoContent() {
         if(this.artist!=null) {
             if(this.artist.getAlbumTitles().size() == 0)
                 return true;
@@ -320,22 +320,64 @@ public class Bean {
     }
 
     public String getSearchResultID(int index) {
-        return String.valueOf(searchResultIDs.get(index));
+        if(this.searchResultIDs.size()>index)
+            return String.valueOf(searchResultIDs.get(index));
+        return null;
     }
 
-    public String getResultArtist(int index) {
-        return this.searchResultsMusic.get(index).getArtist();
+    public String getAlbumResultArtist(int index) {
+        if(this.searchResultsAlbum.size()>index)
+            return this.searchResultsAlbum.get(index).getArtist();
+        return null;
+    }
+
+    public String getMusicResultArtist(int index) {
+        if(this.searchResultsMusic.size()>index)
+            return this.searchResultsMusic.get(index).getArtist();
+        return null;
     }
 
     public String getMusicResultAlbum(int index) {
-        return this.searchResultsMusic.get(index).getAlbum();
+        if(this.searchResultsMusic.size()>index)
+            return this.searchResultsMusic.get(index).getAlbum();
+        return null;
     }
 
     public void setSearchResultsMusic (List<Music> list) {
+        this.searchResultNames.clear();
+        this.searchResultIDs.clear();
         this.searchResultsMusic = list;
         for(Music m : list) {
             this.searchResultNames.add(m.getTitle());
             this.searchResultIDs.add(m.getID());
         }
+    }
+
+    public void setSearchResultsAlbum (List<Album> list) {
+        this.searchResultNames.clear();
+        this.searchResultIDs.clear();
+        this.searchResultsAlbum = list;
+        for(Album a: list) {
+            this.searchResultNames.add(a.getTitle());
+            this.searchResultIDs.add(a.getID());
+        }
+    }
+
+    public void setSearchResultsArtist (List<Artist> list) {
+        this.searchResultNames.clear();
+        this.searchResultIDs.clear();
+        this.searchResultsArtist = list;
+        for(Artist a : list) {
+            this.searchResultNames.add(a.getName());
+            this.searchResultIDs.add(a.getID());
+        }
+    }
+
+    //MISC
+
+    public MessageIdentified<Artist> removeArtist() throws RemoteException {
+        String json = server.removeArtist(this.user, this.artist);
+        MessageIdentified<Artist> rsp = gson.fromJson(json, new TypeToken<MessageIdentified<Shared.Artist>>() {}.getType());
+        return rsp;
     }
 }

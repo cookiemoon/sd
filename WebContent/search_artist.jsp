@@ -17,7 +17,7 @@
 <c:set value="0" var="count" />
 <c:forEach items="${bean.getSearchResultNames()}" var="item" varStatus="status">
     <c:set value="${count+1}" var="count" />
-    <c:out value="${count}. " /><a href="/details_album_page.jsp?id=${bean.getSearchResultID(status.index)}"><c:out value="${item}" /></a><br>
+    <c:out value="${count}. " /><a href="/details_artist_page.jsp?id=${bean.getSearchResultID(status.index)}"><c:out value="${item}" /></a><br>
 </c:forEach>
 </body>
 </html>

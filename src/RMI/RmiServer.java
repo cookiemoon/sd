@@ -216,4 +216,12 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
 
         return waitForResponse(json, messageID);
     }
+
+    @Override
+    public String removeArtist(User self, Artist selected) {
+        int messageID = msgID.getAndIncrement();
+        String json = JSON.messageIdRequest("remove_artist", "null", self, selected, messageID);
+
+        return waitForResponse(json, messageID);
+    }
 }

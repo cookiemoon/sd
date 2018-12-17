@@ -8,16 +8,20 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<jsp:useBean id="bean" class="client.model.Bean" scope="session" />
+
+<% bean.setArtist(request.getParameter("id")); %>
 <html>
 <head>
     <title>DROPMUSIC : remove</title>
 </head>
 <body>
 <h1>Remove Artist</h1><hr>
-<p>Are you sure you want to remove <b><c:out value="${bean.getArtistName()}" /></b>?</p>
+<p>Are you sure you want to remove <b><c:out value="${bean.getArtistName()}" /></b>? <br>
+    (This can only be done for artists without any albums or music associated.)</p>
 <s:form action="remove_artist" method="post">
-    <s:submit value="Delete" />
-    <s:submit value="Cancel" />
+    <s:submit name="choice" value="Confirm" />
+    <s:submit name="choice" value="Cancel" />
 </s:form>
 </body>
 </html>

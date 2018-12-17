@@ -42,5 +42,6 @@ public interface ServerInterface extends Remote {
 
     // Other
     String makeEditor(User self, String grantee) throws RemoteException;
+    String removeArtist(User self, Artist selected) throws RemoteException;
 
 }

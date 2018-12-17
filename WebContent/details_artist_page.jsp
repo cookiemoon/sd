@@ -21,6 +21,11 @@
 <h1><c:out value="${bean.getArtistName()}" /></h1>
 <p>ID: <c:out value="${bean.getArtistID()}" /></p><hr>
 <p><b>Description</b><br><c:out value="${bean.getArtistDescription()}" /></p><hr>
+<c:choose>
+    <c:when test="${session.editor==true}">
+        <a href="/remove_artist.jsp?id=${bean.getArtistID()}">Remove this artist</a><hr>
+    </c:when>
+</c:choose>
 <p><b>Album List</b></p>
 <c:set value="0" var="count" />
 <c:forEach items="${bean.getArtistAlbum()}" var="item" varStatus="status">

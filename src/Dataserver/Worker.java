@@ -1492,7 +1492,7 @@ public class Worker implements Runnable {
         String token = req.getObj();
 
         try {
-
+            con.setAutoCommit(false);
             ResultSet rs = postDropbox(user, token, con);
 
             con.commit();

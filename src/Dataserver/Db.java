@@ -9,7 +9,7 @@ public class Db {
 
     public Db() {
         props = new Properties();
-        props.setProperty("user","anaquelhas");
+        props.setProperty("user","yawner");
         props.setProperty("password","dropmusic");
     }
 

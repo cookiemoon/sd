@@ -12,12 +12,12 @@
 </head>
 <body>
 <a href="/details_music_page.jsp?id=2">TEST!!!</a>
-<p><b>Dropbox Menu</b></p>
+<h1><b>Dropbox Menu</b></h1>
 <c:choose>
     <c:when test="${session.loggedin == true}">
         <c:choose>
             <c:when test="${session.dropbox_associated == false}">
-                <h1><a href="${session.dropbox_auth_url}">Associate your account with dropbox</a></h1>
+                <h2><a href="${session.dropbox_auth_url}">Associate your account with dropbox</a></h2>
             </c:when>
             <c:otherwise>
                 <h1>REST is done kind of hu3</h1>

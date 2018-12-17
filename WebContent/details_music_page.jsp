@@ -18,14 +18,22 @@
 </head>
 <body>
 <h1><c:out value="${bean.getMusicTitle()}" /></h1>
-<p>Music by <a href="/details_artist_page.jsp?id=${bean.getMusicArtistID()}"><c:out value="${bean.getMusicArtist()}" /></a>
-    in <a href="/details_album_page.jsp?id=${bean.getMusicAlbumID()}"><c:out value="${bean.getMusicAlbum()}" /></a></p>
-<p>ID: <c:out value="${bean.getMusicID()}" /></p><hr>
-<p><b>Duration</b> <c:out value="${bean.getMusicDuration()}" /> seconds</p><hr>
-<p><b>Genres</b><br>|
-<c:forEach items="${bean.getMusicGenres()}" var="item">
-    <c:out value="${item} | " />
-</c:forEach></p><hr>
-<p><b>Lyrics</b><br><c:out value="${bean.getMusicLyrics()}" /></p><hr>
+<c:choose>
+    <c:when test="${session.loggedin == true}">
+        <p>Music by <a href="/details_artist_page.jsp?id=${bean.getMusicArtistID()}"><c:out value="${bean.getMusicArtist()}" /></a>
+            in <a href="/details_album_page.jsp?id=${bean.getMusicAlbumID()}"><c:out value="${bean.getMusicAlbum()}" /></a></p>
+        <p>ID: <c:out value="${bean.getMusicID()}" /></p><hr>
+        <p><b>Duration</b> <c:out value="${bean.getMusicDuration()}" /> seconds</p><hr>
+        <p><b>Genres</b><br>|
+        <c:forEach items="${bean.getMusicGenres()}" var="item">
+            <c:out value="${item} | " />
+        </c:forEach></p><hr>
+        <p><b>Lyrics</b><br><c:out value="${bean.getMusicLyrics()}" /></p><hr>
+    </c:when>
+    <c:otherwise>
+        <p><b>You don't belong here.</b></p><br>
+        <a href="/login.jsp">Please log in properly.</a>
+    </c:otherwise>
+</c:choose>
 </body>
 </html>

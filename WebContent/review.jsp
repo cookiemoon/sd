@@ -19,11 +19,19 @@
 </head>
 <body>
 <h1>Review Album</h1><hr>
-<p>Reviewing <b><c:out value="${bean.getAlbumTitle()}"/></b>.</p>
-<s:form action="review" method="post">
-    <p>Score (0-10): <s:textfield name="score" /></p>
-    <p>Review: <s:textfield name="review" /></p>
-    <s:submit value="Post review"/>
-</s:form>
+<c:choose>
+    <c:when test="${session.loggedin == true}">
+        <p>Reviewing <b><c:out value="${bean.getAlbumTitle()}"/></b>.</p>
+        <s:form action="review" method="post">
+            <p>Score (0-10): <s:textfield name="score" /></p>
+            <p>Review: <s:textfield name="review" /></p>
+            <s:submit value="Post review"/>
+        </s:form>
+    </c:when>
+    <c:otherwise>
+        <p><b>You don't belong here.</b></p><br>
+        <a href="/login.jsp">Please log in properly.</a>
+    </c:otherwise>
+</c:choose>
 </body>
 </html>

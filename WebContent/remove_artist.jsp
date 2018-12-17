@@ -17,11 +17,19 @@
 </head>
 <body>
 <h1>Remove Artist</h1><hr>
-<p>Are you sure you want to remove <b><c:out value="${bean.getArtistName()}" /></b>? <br>
-    (This can only be done for artists without any albums or music associated.)</p>
-<s:form action="remove_artist" method="post">
-    <s:submit name="choice" value="Confirm" />
-    <s:submit name="choice" value="Cancel" />
-</s:form>
+<c:choose>
+    <c:when test="${session.editor==true}">
+        <p>Are you sure you want to remove <b><c:out value="${bean.getArtistName()}" /></b>? <br>
+            (This can only be done for artists without any albums or music associated.)</p>
+        <s:form action="remove_artist" method="post">
+            <s:submit name="choice" value="Confirm" />
+            <s:submit name="choice" value="Cancel" />
+        </s:form>
+    </c:when>
+    <c:otherwise>
+        <p><b>You don't belong here.</b></p><br>
+        <a href="/main_menu.jsp">Go back to menu.</a>
+    </c:otherwise>
+</c:choose>
 </body>
 </html>

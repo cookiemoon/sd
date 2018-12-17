@@ -15,11 +15,19 @@
 </head>
 <body>
 <h1>Search Music</h1><hr>
-<c:set value="0" var="count" />
-<c:forEach items="${bean.getSearchResultNames()}" var="item" varStatus="status">
-    <c:set value="${count+1}" var="count" />
-    <c:out value="${count}. " /><a href="/details_music_page.jsp?id=${bean.getSearchResultID(status.index)}"><c:out value="${item}" /></a>
-    <p>by <c:out value="${bean.getMusicResultArtist(status.index)}" /> in <c:out value="${bean.getMusicResultAlbum(status.index)}" /></p><br>
-</c:forEach>
+<c:choose>
+    <c:when test="${session.loggedin == true}">
+        <c:set value="0" var="count" />
+        <c:forEach items="${bean.getSearchResultNames()}" var="item" varStatus="status">
+            <c:set value="${count+1}" var="count" />
+            <c:out value="${count}. " /><a href="/details_music_page.jsp?id=${bean.getSearchResultID(status.index)}"><c:out value="${item}" /></a>
+            <p>by <c:out value="${bean.getMusicResultArtist(status.index)}" /> in <c:out value="${bean.getMusicResultAlbum(status.index)}" /></p><br>
+        </c:forEach>
+    </c:when>
+    <c:otherwise>
+        <p><b>You don't belong here.</b></p><br>
+        <a href="/login.jsp">Please log in properly.</a>
+    </c:otherwise>
+</c:choose>
 </body>
 </html>

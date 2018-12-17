@@ -7,8 +7,10 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import Client_.ClientImplementation;
 import Shared.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,7 +27,7 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
     static Registry r;
 
     // Attributes
-//    private ConcurrentHashMap<String, ClientInterface> users;
+    private ConcurrentHashMap<String, ClientImplementation> users;
     private String id = UUID.randomUUID().toString();
     private RespBroker broker;
     private AtomicInteger msgID;
@@ -158,7 +160,19 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("edit_album", "album", self, selected, messageID);
 
-        return waitForResponse(json, messageID);
+        json = waitForResponse(json, messageID);
+
+        MessageIdentified<Album> req = gson.fromJson(json, new TypeToken<MessageIdentified<Album>>() {}.getType());
+        for (String editor : req.getObj().getEditors()) {
+            if (users.get(editor) != null && !req.getUser().getEmail().equals(editor)) {
+                try {
+                    users.get(editor).newAlbumEdit(req.getUser().getEmail(), req.getObj().getTitle());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return json;
     }
 
     @Override
@@ -214,11 +228,22 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("make_editor", "null", self, grantee, messageID);
 
-        return waitForResponse(json, messageID);
+        json = waitForResponse(json, messageID);
+
+
+        MessageIdentified<String> req = gson.fromJson(json, new TypeToken<MessageIdentified<String>>() {}.getType());
+        if (users.get(req.getObj()) != null) {
+            try {
+                users.get(req.getObj()).newEditor(req.getUser().getEmail());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return json;
     }
 
     @Override
-    public String associateDropbox(User user, String code) throws RemoteException {
+    public String associateDropbox(User user, String code) {
         int messageID = msgID.getAndIncrement();
         String json = JSON.messageIdRequest("associate_dropbox", "users", user, code, messageID);
         
@@ -231,5 +256,11 @@ public class RmiServer extends UnicastRemoteObject implements ServerInterface {
         String json = JSON.messageIdRequest("remove_artist", "null", self, selected, messageID);
 
         return waitForResponse(json, messageID);
+    }
+
+    @Override
+    public String associateCb(String user, ClientImplementation i) {
+        users.put(user, i);
+        return "SUCCESS";
     }
 }

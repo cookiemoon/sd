@@ -4,6 +4,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import Client_.ClientImplementation;
+import Client_.ClientInterface;
 import Shared.*;
 
 // String json cause its much more performant if the client processes the json and the RMI just embeds it with the msgid
@@ -43,6 +45,6 @@ public interface ServerInterface extends Remote {
     // Other
     String makeEditor(User self, String grantee) throws RemoteException;
     String removeArtist(User self, Artist selected) throws RemoteException;
-
     String associateDropbox(User user, String code) throws RemoteException;
+    String associateCb(String user, ClientImplementation i) throws RemoteException;
 }

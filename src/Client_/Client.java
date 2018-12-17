@@ -87,6 +87,13 @@ public class Client {
                         System.out.println(" - " + n);
                     }
                 }*/
+                if (logged) {
+                    try {
+                        this.serverInterface.associateCb(this.self.getEmail(), this.ci);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
             } else {
                 pMainMenu();
                 String option = inputUtil.promptStr(PROMPT);

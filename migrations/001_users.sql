@@ -2,6 +2,6 @@ CREATE TABLE users (
     email   VARCHAR(256) UNIQUE,
     pwd     VARCHAR(128) NOT NULL,
     editor  BOOL NOT NULL DEFAULT false,
-    dropbox_token VARCHAR(256),
+    dropbox_token VARCHAR(256) DEFAULT NULL,
     PRIMARY KEY(email)
 )

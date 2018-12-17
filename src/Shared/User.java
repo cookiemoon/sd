@@ -12,6 +12,7 @@ public class User implements Serializable {
     private String email;
     private String pwd;
     private String sesh_hash;
+    private String dropboxToken;
     private boolean editor;
 
     public static User newUser() {
@@ -39,6 +40,14 @@ public class User implements Serializable {
         this.email = email;
         this.pwd = pwd;
         this.editor = editor;
+    }
+
+    public String getDropboxToken() {
+        return dropboxToken;
+    }
+
+    public void setDropboxToken(String dropboxToken) {
+        this.dropboxToken = dropboxToken;
     }
 
     public static long getSerialVersionUID() {

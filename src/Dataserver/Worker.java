@@ -432,6 +432,7 @@ public class Worker implements Runnable {
 
             if(rs.next()) {
                 User user = new User(rs.getString("email"), rs.getString("pwd"), rs.getBoolean("editor"));
+                user.setDropboxToken(rs.getString("dropbox_token"));
                 return user;
             }
 
@@ -616,6 +617,25 @@ public class Worker implements Runnable {
             ResultSet rs = stmnt.getGeneratedKeys();
 
             return rs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } catch (MalformedQuery e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private ResultSet postDropbox(User data, String code, Connection con) {
+        try {
+            if(!setFields(con, "user-has-dropbox", data.getEmail()).executeQuery().next()) {
+                PreparedStatement stmnt = setFields(con, "post-user-dropbox", code, data.getEmail());
+                stmnt.executeUpdate();
+                ResultSet rs = stmnt.getGeneratedKeys();
+
+                return rs;
+            } else
+                return null;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -1465,7 +1485,33 @@ public class Worker implements Runnable {
     }
 
     private void associateDropbox(String json) {
-        
+        MessageIdentified<String> req = gson.fromJson(json, new TypeToken<MessageIdentified<String>>() {}.getType());
+        User user = req.getUser();
+
+        Connection con = db.getConn();
+        String token = req.getObj();
+
+        try {
+
+            ResultSet rs = postDropbox(user, token, con);
+
+            if(rs!=null) {
+                con.commit();
+                con.close();
+
+                messageClientSuccess(req, null);
+            } else {
+                internalServerError(con, req);
+                con.close();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            internalServerError(con, req);
+        } catch (Exception e) {
+            e.printStackTrace();
+            messageClientError(req, "Invalid request");
+        }
     }
 
 

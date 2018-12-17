@@ -1,11 +1,14 @@
 package Client_;
 
+import Dataserver.MalformedQuery;
 import Shared.*;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.rmi.ConnectException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -40,7 +43,7 @@ public class Client {
     public static void main (String[] args) {
         Client c = null;
 
-        String addr = "localhost";
+        String addr = "localhost:1100";
         if (args.length == 1) {
             addr = args[0];
         }
@@ -61,8 +64,8 @@ public class Client {
         this.ci = new ClientImplementation();
         this.addr = addr;
         try {
-            this.serverInterface = (ServerInterface) LocateRegistry.getRegistry(SERVER_PORT).lookup("rmi://" + this.addr + "/RMIServer");
-        } catch (NotBoundException e) {
+            this.serverInterface = (ServerInterface) Naming.lookup("rmi://localhost:1100/RMIServer");
+        } catch (NotBoundException| MalformedURLException e) {
             System.out.println("Couldn't find server interface");
             e.printStackTrace();
         }
@@ -379,9 +382,6 @@ public class Client {
             System.out.println("\nError: "+msg.errors()+"\n");
         }
     }
-
-    
-    //FREE_REAL_ESTATE
 
     private void pMainMenu () {
         System.out.println("Main Menu.\nType the name of what you want to do\n\n" +

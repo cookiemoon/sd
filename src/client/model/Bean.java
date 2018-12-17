@@ -123,6 +123,10 @@ public class Bean {
         return null;
     }
 
+    public List<String> getMusicGenres() {
+        return this.music.getGenres();
+    }
+
     //ALBUM RELATED
 
     public void setAlbum(String albumID) throws RemoteException {
@@ -207,12 +211,12 @@ public class Bean {
         return null;
     }
 
-    public boolean artistHasNoContent() {
-        if(this.artist!=null) {
-            if(this.artist.getAlbumTitles().size() == 0)
-                return true;
-        }
-        return false;
+    public List<String> getAlbumGenres() {
+        return this.album.getGenres();
+    }
+
+    public String getAlbumScore() {
+        return String.valueOf(album.avgScore());
     }
 
     //ARTIST RELATED
@@ -275,6 +279,14 @@ public class Bean {
         return null;
     }
 
+    public boolean artistHasNoContent() {
+        if(this.artist!=null) {
+            if(this.artist.getAlbumTitles().size() == 0)
+                return true;
+        }
+        return false;
+    }
+
     //USER RELATED
 
 	public Message<User> login() throws RemoteException {
@@ -311,6 +323,19 @@ public class Bean {
         String json = server.postReview(obj);
         Message<Review> rsp = gson.fromJson(json, new TypeToken<Message<Review>>() {}.getType());
         return rsp;
+    }
+
+    public List<String> getAlbumReview() {
+        this.album.setReviews();
+        return this.album.getReview();
+    }
+
+    public String getReviewScore(int index) {
+        return String.valueOf(this.album.getReviewScore().get(index));
+    }
+
+    public String getReviewer(int index) {
+        return String.valueOf(this.album.getReviewUser().get(index));
     }
 
     //SEARCH RESULTS

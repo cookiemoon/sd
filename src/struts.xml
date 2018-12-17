@@ -73,47 +73,47 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
       </action>
 
       <action name="editor" class="client.action.MakeEditorAction" method="execute">
-          <result name="success">/main_menu.jsp</result>
+          <result name="success">/success.jsp</result>
           <result name="input">/error_page.jsp</result>
       </action>
 
       <action name="post_artist" class="client.action.PostArtistAction" method="execute">
-          <result name="success">/main_menu.jsp</result>
+          <result name="success">/success.jsp</result>
           <result name="input">/error_page.jsp</result>
       </action>
 
       <action name="post_album" class="client.action.PostAlbumAction" method="execute">
-          <result name="success">/main_menu.jsp</result>
+          <result name="success">/success.jsp</result>
           <result name="input">/error_page.jsp</result>
       </action>
 
       <action name="post_music" class="client.action.PostMusicAction" method="execute">
-          <result name="success">/main_menu.jsp</result>
+          <result name="success">/success.jsp</result>
           <result name="input">/error_page.jsp</result>
       </action>
 
       <action name="edit_artist" class="client.action.EditArtistAction" method="execute">
-          <result name="success">/main_menu.jsp</result>
+          <result name="success">/success.jsp</result>
           <result name="input">/error_page.jsp</result>
       </action>
 
       <action name="edit_album" class="client.action.EditAlbumAction" method="execute">
-          <result name="success">/main_menu.jsp</result>
+          <result name="success">/success.jsp</result>
           <result name="input">/error_page.jsp</result>
       </action>
 
       <action name="edit_music" class="client.action.EditMusicAction" method="execute">
-          <result name="success">/main_menu.jsp</result>
+          <result name="success">/success.jsp</result>
           <result name="input">/error_page.jsp</result>
       </action>
 
       <action name="review" class="client.action.ReviewAction" method="execute">
-          <result name="success">/main_menu.jsp</result>
+          <result name="success">/success.jsp</result>
           <result name="input">/error_page.jsp</result>
       </action>
 
       <action name="remove_artist" class="client.action.RemoveArtistAction" method="execute">
-          <result name="success">/main_menu.jsp</result>
+          <result name="success">/success.jsp</result>
           <result name="input">/error_page.jsp</result>
       </action>
 

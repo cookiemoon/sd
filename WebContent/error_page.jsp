@@ -15,7 +15,7 @@
     <script>var username = ('${session.username}')</script>
 </head>
 <body>
-<p>An error has occurred.<br> ${session.error}</p>
+<p>This action could not be processed. <br> ${session.error}</p>
 <s:form action="error" method="post">
         <s:submit value="Back" name="back" />
     </s:form>

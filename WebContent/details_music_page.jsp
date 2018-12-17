@@ -21,7 +21,11 @@
 <p>Music by <a href="/details_artist_page.jsp?id=${bean.getMusicArtistID()}"><c:out value="${bean.getMusicArtist()}" /></a>
     in <a href="/details_album_page.jsp?id=${bean.getMusicAlbumID()}"><c:out value="${bean.getMusicAlbum()}" /></a></p>
 <p>ID: <c:out value="${bean.getMusicID()}" /></p><hr>
-<p><b>Duration</b> <c:out value="${bean.getMusicDuration()}" /> seconds</p>
-<p><b>Lyrics</b><br><c:out value="${bean.getMusicLyrics()}" /></p>
+<p><b>Duration</b> <c:out value="${bean.getMusicDuration()}" /> seconds</p><hr>
+<p><b>Genres</b><br>|
+<c:forEach items="${bean.getMusicGenres()}" var="item">
+    <c:out value="${item} | " />
+</c:forEach></p><hr>
+<p><b>Lyrics</b><br><c:out value="${bean.getMusicLyrics()}" /></p><hr>
 </body>
 </html>

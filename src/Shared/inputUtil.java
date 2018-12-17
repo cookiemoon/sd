@@ -77,19 +77,21 @@ public class inputUtil implements Serializable {
         try {
             String[] parts = date.split("/");
             Calendar c = new GregorianCalendar();
-            int year = Integer.parseInt(parts[2]);
-            if(year < YEAR_START || year > YEAR_END)
-                throw new BadInput(param, "invalid year in date.");
-            int month = Integer.parseInt(parts[1])-1;
-            if(month < MONTH_START || month > MONTH_END)
-                throw new BadInput(param, "invalid month in date.");
             int day = Integer.parseInt(parts[0]);
             if(day < DAY_START || day > DAY_END)
                 throw new BadInput(param, "invalid day in date.");
+            int month = Integer.parseInt(parts[1])-1;
+            if(month < MONTH_START || month > MONTH_END)
+                throw new BadInput(param, "invalid month in date.");
+            int year = Integer.parseInt(parts[2]);
+            if(year < YEAR_START || year > YEAR_END)
+                throw new BadInput(param, "invalid year in date.");
             c.set(year,month,day);
             return c;
         } catch (NumberFormatException e) {
             throw new BadInput(param, "the parameters entered were not numbers.");
+        } catch (IndexOutOfBoundsException e) {
+            throw new BadInput(param, "not enough numbers entered (did you properly separate then with '/'?).");
         }
     }
 

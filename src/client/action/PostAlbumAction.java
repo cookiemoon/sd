@@ -17,17 +17,19 @@ public class PostAlbumAction extends ActionSupport implements SessionAware {
     private String artistID;
     private String release_date;
     private String label;
+    private String genres;
     private Album obj = new Album(-1);
 
     @Override
     public String execute() {
-        if(inputUtil.notEmptyOrNull(title, desc, artistID, release_date)) {
+        if(inputUtil.notEmptyOrNull(title, desc, artistID, release_date, genres)) {
             try {
                 obj.setTitle(title);
                 obj.setDescription(desc);
                 obj.setLabel(label);
                 obj.setReleaseDate(inputUtil.toCalendar(release_date, "release date"));
                 obj.setArtistID(inputUtil.StringToInt(artistID, "artist ID"));
+                obj.setGenres(inputUtil.separateBy(genres, ","));
                 try {
                     MessageIdentified<Album> rsp = this.getBean().postAlbum(obj);
                     System.out.println(rsp);
@@ -54,6 +56,10 @@ public class PostAlbumAction extends ActionSupport implements SessionAware {
             session.put("back", "menu");
             return INPUT;
         }
+    }
+
+    public void setGenres(String genres) {
+        this.genres = genres;
     }
 
     public void setLabel(String label) {

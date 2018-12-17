@@ -31,6 +31,10 @@ public class Music implements Serializable {
         this.lyrics = null;
     }
 
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
+    }
+
     public int getAlbumID() {
         return albumID;
     }

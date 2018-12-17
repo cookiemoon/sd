@@ -19,17 +19,19 @@ public class PostMusicAction extends ActionSupport implements SessionAware {
     private String duration;
     private String lyrics;
     private String albumID;
+    private String genres;
     private Music obj = new Music(-1);
 
 
     @Override
     public String execute() {
-        if(inputUtil.notEmptyOrNull(title, duration, lyrics, albumID)) {
+        if(inputUtil.notEmptyOrNull(title, duration, lyrics, albumID, genres)) {
             try{
                 obj.setTitle(title);
                 obj.setLyrics(lyrics);
                 obj.setDuration(inputUtil.StringToInt(duration, "duration"));
                 obj.setAlbumID(inputUtil.StringToInt(albumID, "album ID"));
+                obj.setGenres(inputUtil.separateBy(genres, ","));
                 try {
                     MessageIdentified<Music> rsp = this.getBean().postMusic(obj);
                     System.out.println(rsp);
@@ -56,6 +58,10 @@ public class PostMusicAction extends ActionSupport implements SessionAware {
             session.put("back", "menu");
             return INPUT;
         }
+    }
+
+    public void setGenres(String genres) {
+        this.genres = genres;
     }
 
     public void setTitle(String title) {

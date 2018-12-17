@@ -19,6 +19,7 @@
 <c:choose>
     <c:when test="${session.editor == true}">
         <a href="/edit.jsp">Back</a>
+        <p>To leave fields as-is, leave the text box empty.</p>
         <s:form action="edit_album" method="post">
             <p>Album ID:</p>
             <s:textfield name="albumID" /><br>
@@ -27,7 +28,7 @@
             <s:textfield name="title" /><br>
             <p>New album description:</p>
             <s:textfield name="desc" /><br>
-            <p>New release date:</p>
+            <p>New release date [DD/MM/YYYY]:</p>
             <s:textfield name="release_date" /><br>
             <p>New label:</p>
             <s:textfield name="label" /><br>

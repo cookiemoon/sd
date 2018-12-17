@@ -279,6 +279,13 @@ public class Worker implements Runnable {
                     album.setArtistID(rs.getInt("id"));
                 }
 
+                stmnt = setFields(con, "get-album-genres", data.getID());
+                rs = stmnt.executeQuery();
+
+                while(rs.next()) {
+                    album.addGenre(rs.getString("genres_gname"));
+                }
+
                 return album;
             }
 
@@ -372,6 +379,13 @@ public class Worker implements Runnable {
                     music.setArtistID(rs.getInt("id"));
                 }
 
+                stmnt = setFields(con, "get-music-genres", data.getID());
+                rs = stmnt.executeQuery();
+
+                while(rs.next()) {
+                    music.addGenre(rs.getString("genres_gname"));
+                }
+
                 return music;
             }
 
@@ -458,6 +472,8 @@ public class Worker implements Runnable {
 
                 if(genres!=null) {
                     for (String g : genres) {
+                        if(!setFields(con, "get-genre", g).executeQuery().next())
+                            setFields(con, "post-genre", g).executeUpdate();
                         stmnt = setFields(con, "post-album-genre", rs.getInt("id"), g);
                         stmnt.executeUpdate();
                     }
@@ -552,6 +568,8 @@ public class Worker implements Runnable {
 
                 if(genres!=null) {
                     for (String g : genres) {
+                        if(!setFields(con, "get-genre", g).executeQuery().next())
+                            setFields(con, "post-genre", g).executeUpdate();
                         stmnt = setFields(con, "post-music-genre", rs.getInt("id"), g);
                         stmnt.executeUpdate();
                     }
@@ -1355,9 +1373,8 @@ public class Worker implements Runnable {
             } else {
                 while(rs.next()) {
                     music = getMusic(new Music(rs.getInt("id")), con);
+                    obj.add(music);
                 }
-
-                obj.add(music);
             }
 
             con.close();
@@ -1392,9 +1409,8 @@ public class Worker implements Runnable {
             } else {
                 while(rs.next()) {
                     album = getAlbum(new Album(rs.getInt("id")), con);
+                    obj.add(album);
                 }
-
-                obj.add(album);
             }
 
             con.close();
@@ -1429,9 +1445,8 @@ public class Worker implements Runnable {
             } else {
                 while(rs.next()) {
                     artist = getArtist(new Artist(rs.getInt("id")), con);
+                    obj.add(artist);
                 }
-
-                obj.add(artist);
             }
 
             con.close();

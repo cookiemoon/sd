@@ -14,20 +14,43 @@ public class Album implements Serializable {
     private Calendar releaseDate;
     private List<Integer> musicIDs = new ArrayList<>();
     private List<String> musicTitles = new ArrayList<>();
+    private List<String> review = new ArrayList<>();
+    private List<Integer> reviewScore = new ArrayList<>();
+    private List<String> reviewUser = new ArrayList<>();
     private int artistID;
     private String artist;
     private String details;
     private Album old;
 
-    public List<Review> getReviews() {
-        return reviews;
+    public List<String> getReview() {
+        return review;
+    }
+
+    public void addReview(String review) {
+        this.review.add(review);
+    }
+
+    public List<Integer> getReviewScore() {
+        return reviewScore;
+    }
+
+    public void addReviewScore(int reviewScore) {
+        this.reviewScore.add(reviewScore);
+    }
+
+    public List<String> getReviewUser() {
+        return reviewUser;
+    }
+
+    public void addReviewUser(String reviewUser) {
+        this.reviewUser.add(reviewUser);
     }
 
     public List<String> getEditors() {
         return editors;
     }
 
-    private List<String> genres = new ArrayList<>();
+    private List<String> genres;
     private List<Review> reviews = new ArrayList<>();
     private List<String> editors = new ArrayList<>();
     private boolean edited = false;
@@ -60,11 +83,15 @@ public class Album implements Serializable {
         return total/count;
     }
 
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
+    }
+
     public void addReview(Review m) { this.reviews.add(m); }
 
     public void addGenre(String genre) { this.genres.add(genre); }
 
-    public List<Review> getReview () { return this.reviews; }
+    public List<Review> getReviews () { return this.reviews; }
 
     public int getID() {
         return id;
@@ -160,5 +187,13 @@ public class Album implements Serializable {
 
     public List<Integer> getMusicIDs() {
         return this.musicIDs;
+    }
+
+    public void setReviews() {
+        for (Review r : reviews) {
+            this.review.add(r.getReviewText());
+            this.reviewScore.add(r.getScore());
+            this.reviewUser.add(r.getReviewer().getEmail());
+        }
     }
 }

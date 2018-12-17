@@ -24,9 +24,9 @@
             <s:textfield name="name" /><br>
             <p>Artist description:</p>
             <s:textfield name="desc" /><br>
-            <p>Start of active period:</p>
+            <p>Start of active period [DD/MM/YYYY]:</p>
             <s:textfield name="start" /><br>
-            <p>End of active period:</p>
+            <p>End of active period [DD/MM/YYYY], or leave empty for presently active:</p>
             <s:textfield name="end" /><br>
             <s:submit value="Post artist"/>
         </s:form>

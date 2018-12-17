@@ -11,7 +11,6 @@
 	<script>var username = ('${session.username}')</script>
 </head>
 <body>
-<a href="/details_music_page.jsp?id=2">TEST!!!</a>
 <p><b>Main Menu</b></p>
 	<c:choose>
 		<c:when test="${session.loggedin == true}">

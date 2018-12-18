@@ -2,7 +2,7 @@ var websocket = null;
 var notifN = 0;
 
 window.onload = function() { // URI = ws://localhost:8080/Hey/ws
-    connect('ws://' + window.location.host + '/Hey/ws');
+    connect('ws://10.16.2.109:8080/ws');
 }
 
 function connect(host) { // connect to the host websocket

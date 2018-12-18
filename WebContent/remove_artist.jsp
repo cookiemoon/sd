@@ -14,6 +14,8 @@
 <html>
 <head>
     <title>DROPMUSIC : remove</title>
+    <script type="application/javascript" src="js/notifications.js"></script>
+    <script>var username = ('${session.username}')</script>
 </head>
 <body>
 <h1>Remove Artist</h1><hr>

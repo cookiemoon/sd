@@ -35,7 +35,7 @@ public class EditAlbumAction extends ActionSupport implements SessionAware {
                     System.out.println(rsp);
                     if (rsp.isAccepted()) {
                         for (String user : rsp.getObj().getEditors()) {
-                            if (!user.equals(this.session.get("username")))
+                            if (!user.equals(this.session.get("username")) && WebSocketAnnotation.onlineUsers.get(user) != null)
                                 WebSocketAnnotation.onlineUsers.get(user).sendMessage(user + " edited album '" + rsp.getObj().getTitle() + "'");
                         }
                         return SUCCESS;
